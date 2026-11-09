@@ -1,5 +1,6 @@
 import prisma from '../config/db.js';
 import { ATTENDED_STATUSES, DEFAULT_THRESHOLD } from './attendance.service.js';
+import { sendInterventionEmail } from './email.service.js';
 
 function riskLevelFor(percentage) {
   if (percentage < 50) return 'CRITICAL';
@@ -147,5 +148,94 @@ EduPulse Platform Security & Audit Engine
     generatedAt: new Date().toISOString(),
     recipient: student.email,
     severity: percentage < 50 ? 'HIGH' : 'MEDIUM',
+  };
+}
+
+/**
+ * Dispatch real academic warning email and persist in-app notification ledger.
+ */
+export async function dispatchInterventionNotice({
+  studentId,
+  courseId,
+  facultyName,
+  notes,
+  io,
+}) {
+  const student = await prisma.user.findUnique({
+    where: { id: studentId },
+    select: { id: true, name: true, email: true, rollNumber: true, department: true },
+  });
+
+  if (!student) {
+    throw new Error('Student not found');
+  }
+
+  let courseDetails = null;
+  let stats = { total: 0, attended: 0, percentage: 0 };
+
+  if (courseId) {
+    const course = await prisma.course.findUnique({
+      where: { id: courseId },
+      include: {
+        sessions: {
+          where: { endTime: { not: null } },
+          include: {
+            records: { where: { studentId } },
+          },
+        },
+      },
+    });
+
+    if (course) {
+      const total = course.sessions.length;
+      const attended = course.sessions.filter((s) =>
+        s.records.some((r) => ATTENDED_STATUSES.includes(r.status))
+      ).length;
+      const pct = total > 0 ? Number(((attended / total) * 100).toFixed(1)) : 0;
+      courseDetails = {
+        name: course.name,
+        code: course.code,
+        percentage: pct,
+        total,
+        attended,
+      };
+      stats = { total, attended, percentage: pct };
+    }
+  }
+
+  // 1. Dispatch real email via Nodemailer
+  const emailResult = await sendInterventionEmail({
+    toEmail: student.email,
+    studentName: student.name,
+    rollNumber: student.rollNumber,
+    courseName: courseDetails?.name || 'Enrolled Curriculum',
+    courseCode: courseDetails?.code || 'INST-CORE',
+    attendancePercentage: courseDetails?.percentage || 0,
+    missedCount: stats.total - stats.attended,
+    totalLectures: stats.total,
+    facultyName,
+    notes,
+  });
+
+  // 2. Persist in database Notification ledger
+  const notification = await prisma.notification.create({
+    data: {
+      userId: student.id,
+      title: `Critical Attendance Warning: ${courseDetails?.code || 'Shortfall'} (${courseDetails?.percentage || 0}%)`,
+      message: `Your aggregate attendance has fallen below 75%. Instructor: ${facultyName || 'Academic Office'}. Check your institutional email for details.`,
+      type: stats.percentage < 50 ? 'CRITICAL' : 'WARNING',
+      emailUrl: emailResult.previewUrl || null,
+    },
+  });
+
+  // 3. Emit real-time WebSocket notification if client connected
+  if (io) {
+    io.to(`user:${student.id}`).emit('notification:new', { notification });
+  }
+
+  return {
+    success: true,
+    notification,
+    emailResult,
   };
 }

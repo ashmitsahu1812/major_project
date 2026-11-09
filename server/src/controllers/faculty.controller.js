@@ -1,6 +1,6 @@
 import prisma from '../config/db.js';
 import { generateQrPayload } from '../services/qr.service.js';
-import { getAtRiskStudents } from '../services/intervention.service.js';
+import { getAtRiskStudents, dispatchInterventionNotice } from '../services/intervention.service.js';
 import { startSessionQrRotation, stopSessionQrRotation } from '../socket/index.js';
 import {
   ATTENDANCE_STATUSES,
@@ -8,6 +8,9 @@ import {
   isValidUuid,
   parseOptionalFloat,
 } from '../utils/validation.js';
+
+// In-memory registry of active engagement challenges for online/hybrid sessions
+export const activeEngagementPings = new Map();
 
 async function findSessionForUser(sessionId, user) {
   const session = await prisma.lectureSession.findUnique({
@@ -398,6 +401,128 @@ export async function getStudentRisk(req, res, next) {
     }
 
     return res.json({ success: true, atRisk });
+  } catch (error) {
+    next(error);
+  }
+}
+
+/**
+ * Dispatch real academic intervention notice (Email + In-App notification ledger).
+ */
+export async function sendIntervention(req, res, next) {
+  try {
+    const { studentId, courseId, notes } = req.body;
+
+    if (!isValidUuid(studentId)) {
+      return res.status(400).json({ success: false, message: 'Valid student ID is required' });
+    }
+
+    const io = req.app.get('io');
+    const result = await dispatchInterventionNotice({
+      studentId,
+      courseId,
+      facultyName: req.user.name,
+      notes,
+      io,
+    });
+
+    return res.json({
+      success: true,
+      message: 'Official warning notice and email dispatched successfully',
+      notification: result.notification,
+      emailResult: result.emailResult,
+    });
+  } catch (error) {
+    next(error);
+  }
+}
+
+/**
+ * Trigger a 60-second Active Engagement Ping for an online or hybrid lecture session.
+ */
+export async function triggerEngagementPing(req, res, next) {
+  try {
+    const { id: sessionId } = req.params;
+
+    if (!isValidUuid(sessionId)) {
+      return res.status(400).json({ success: false, message: 'Valid session ID is required' });
+    }
+
+    const access = await findSessionForUser(sessionId, req.user);
+    if (access.error) {
+      return res.status(access.error.status).json({ success: false, message: access.error.message });
+    }
+
+    if (access.session.endTime) {
+      return res.status(400).json({ success: false, message: 'Cannot trigger ping on completed session' });
+    }
+
+    // Generate random 4-digit numeric engagement code
+    const code = Math.floor(1000 + Math.random() * 9000).toString();
+    const durationSeconds = 60;
+    const expiresAt = new Date(Date.now() + durationSeconds * 1000);
+
+    const pingData = {
+      sessionId,
+      code,
+      startedAt: new Date(),
+      expiresAt,
+      durationSeconds,
+      responses: new Set(),
+    };
+
+    activeEngagementPings.set(sessionId, pingData);
+
+    const io = req.app.get('io');
+    if (io) {
+      io.to(`session:${sessionId}`).emit('engagement:ping', {
+        sessionId,
+        code,
+        durationSeconds,
+        expiresAt: expiresAt.toISOString(),
+      });
+    }
+
+    return res.json({
+      success: true,
+      message: 'Active engagement ping broadcasted to lecture attendees',
+      code,
+      durationSeconds,
+      expiresAt,
+    });
+  } catch (error) {
+    next(error);
+  }
+}
+
+/**
+ * Get current engagement status for a session.
+ */
+export async function getEngagementStatus(req, res, next) {
+  try {
+    const { id: sessionId } = req.params;
+
+    if (!isValidUuid(sessionId)) {
+      return res.status(400).json({ success: false, message: 'Valid session ID is required' });
+    }
+
+    const ping = activeEngagementPings.get(sessionId);
+    if (!ping) {
+      return res.json({ success: true, active: false });
+    }
+
+    const now = Date.now();
+    const isExpired = now >= ping.expiresAt.getTime();
+    const secondsRemaining = isExpired ? 0 : Math.ceil((ping.expiresAt.getTime() - now) / 1000);
+
+    return res.json({
+      success: true,
+      active: !isExpired,
+      code: ping.code,
+      secondsRemaining,
+      respondedCount: ping.responses.size,
+      respondedStudentIds: Array.from(ping.responses),
+    });
   } catch (error) {
     next(error);
   }

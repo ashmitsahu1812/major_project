@@ -7,6 +7,9 @@ import {
   Check,
   AlertCircle,
   UserCheck,
+  Send,
+  ExternalLink,
+  CheckCircle2,
 } from "lucide-react";
 import toast from "react-hot-toast";
 import api from "../../api/axios";
@@ -21,6 +24,10 @@ export default function StudentRisk() {
 
   const [alertModalOpen, setAlertModalOpen] = useState(false);
   const [activeNotice, setActiveNotice] = useState(null);
+  const [activeStudentId, setActiveStudentId] = useState(null);
+  const [activeCourseId, setActiveCourseId] = useState(null);
+  const [sendingEmail, setSendingEmail] = useState(false);
+  const [emailSentResult, setEmailSentResult] = useState(null);
   const [copied, setCopied] = useState(false);
 
   useEffect(() => {
@@ -37,14 +44,38 @@ export default function StudentRisk() {
     load();
   }, []);
 
-  const handleGenerateNotice = async (studentId) => {
+  const handleGenerateNotice = async (studentId, courseId = null) => {
     try {
+      setActiveStudentId(studentId);
+      setActiveCourseId(courseId);
+      setEmailSentResult(null);
       const res = await api.post("/attendance/generate-alert", { studentId });
       setActiveNotice(res.data.notice);
       setAlertModalOpen(true);
       setCopied(false);
     } catch (err) {
       toast.error(err.response?.data?.message || "Failed to generate notice");
+    }
+  };
+
+  const handleDispatchLiveEmail = async () => {
+    if (!activeStudentId) return;
+    setSendingEmail(true);
+    try {
+      const res = await api.post("/faculty/intervention/send-warning", {
+        studentId: activeStudentId,
+        courseId: activeCourseId,
+        notes: "Mandatory advisory session required before next examination cycle.",
+      });
+
+      if (res.data?.success) {
+        setEmailSentResult(res.data);
+        toast.success("Real warning email & in-app notification dispatched!");
+      }
+    } catch (err) {
+      toast.error(err.response?.data?.message || "Failed to dispatch email");
+    } finally {
+      setSendingEmail(false);
     }
   };
 
@@ -196,20 +227,49 @@ export default function StudentRisk() {
               </p>
             </div>
 
-            <pre className="p-4 bg-slate-950/60 border border-slate-800 rounded-2xl text-xs text-slate-300 font-mono whitespace-pre-wrap leading-relaxed max-h-80 overflow-y-auto">
+            {emailSentResult && (
+              <div className="p-4 rounded-xl bg-emerald-500/10 border border-emerald-500/30 space-y-2">
+                <div className="flex items-center gap-2 text-emerald-400 text-xs font-bold">
+                  <CheckCircle2 className="w-4 h-4" />
+                  <span>Real Email &amp; In-App Notification Dispatched Successfully</span>
+                </div>
+                {emailSentResult.emailResult?.previewUrl && (
+                  <a
+                    href={emailSentResult.emailResult.previewUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-500/20 text-emerald-300 text-xs font-semibold hover:bg-emerald-500/30 transition"
+                  >
+                    <ExternalLink className="w-3.5 h-3.5" />
+                    Open Live Delivered Email in Browser
+                  </a>
+                )}
+              </div>
+            )}
+
+            <pre className="p-4 bg-slate-950/60 border border-slate-800 rounded-2xl text-xs text-slate-300 font-mono whitespace-pre-wrap leading-relaxed max-h-72 overflow-y-auto">
               {activeNotice.content}
             </pre>
 
-            <div className="flex justify-between items-center pt-4 border-t border-slate-800">
-              <button
-                onClick={handleCopyNotice}
-                className="flex items-center gap-1.5 px-4 py-2 rounded-xl border border-slate-800 text-xs font-semibold text-slate-300 hover:text-white hover:bg-slate-800 transition"
-              >
-                {copied ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
-                <span>{copied ? "Copied" : "Copy Text"}</span>
-              </button>
+            <div className="flex flex-wrap justify-between items-center gap-3 pt-4 border-t border-slate-800">
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={handleCopyNotice}
+                  className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl border border-slate-800 text-xs font-semibold text-slate-300 hover:text-white hover:bg-slate-800 transition"
+                >
+                  {copied ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
+                  <span>{copied ? "Copied" : "Copy Text"}</span>
+                </button>
+                <button
+                  onClick={handleDownloadNotice}
+                  className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl border border-slate-800 text-xs font-semibold text-slate-300 hover:text-white transition"
+                >
+                  <Download className="w-3.5 h-3.5" />
+                  <span>Download</span>
+                </button>
+              </div>
 
-              <div className="flex gap-2">
+              <div className="flex items-center gap-2">
                 <button
                   onClick={() => setAlertModalOpen(false)}
                   className="px-4 py-2 rounded-xl border border-slate-800 text-xs font-semibold text-slate-400 hover:text-white transition"
@@ -217,11 +277,12 @@ export default function StudentRisk() {
                   Close
                 </button>
                 <button
-                  onClick={handleDownloadNotice}
-                  className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold transition"
+                  onClick={handleDispatchLiveEmail}
+                  disabled={sendingEmail}
+                  className="btn-primary flex items-center gap-1.5 text-xs px-4 py-2"
                 >
-                  <Download className="w-3.5 h-3.5" />
-                  Download
+                  <Send className="w-3.5 h-3.5" />
+                  <span>{sendingEmail ? "Transmitting..." : "Dispatch Real Email & Notification"}</span>
                 </button>
               </div>
             </div>

@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
-import { Users, Edit3, StopCircle, Radio, AlertTriangle } from "lucide-react";
+import { Users, Edit3, StopCircle, Radio, AlertTriangle, Zap, Timer, CheckCircle2 } from "lucide-react";
 import toast from "react-hot-toast";
 import api from "../../api/axios";
 import { useSocket } from "../../hooks/useSocket";
@@ -22,6 +22,11 @@ export default function LiveAttendance() {
   const [overrideModalOpen, setOverrideModalOpen] = useState(false);
   const [selectedStudentId, setSelectedStudentId] = useState("");
   const [overrideStatus, setOverrideStatus] = useState("PRESENT");
+
+  // Engagement challenge state for Online/Hybrid lectures
+  const [activePing, setActivePing] = useState(null);
+  const [triggeringPing, setTriggeringPing] = useState(false);
+  const [pingCountdown, setPingCountdown] = useState(0);
 
   const fetchLiveSession = useCallback(async (sId) => {
     if (!sId) return;
@@ -91,16 +96,59 @@ export default function LiveAttendance() {
       toast("This lecture session has ended", { icon: "⏹️" });
       navigate("/faculty");
     };
+    const handleEngagementAck = ({ studentName, count }) => {
+      setActivePing((prev) => prev ? { ...prev, respondedCount: count } : null);
+      toast.success(`${studentName} confirmed active attendance!`, { icon: '⚡', id: 'eng-ack' });
+    };
+
     socket.on("attendance:new", handleRefresh);
     socket.on("proxy:alert", handleProxy);
     socket.on("session:ended", handleSessionEnded);
+    socket.on("engagement:acknowledged", handleEngagementAck);
     return () => {
       socket.off("attendance:new", handleRefresh);
       socket.off("proxy:alert", handleProxy);
       socket.off("session:ended", handleSessionEnded);
+      socket.off("engagement:acknowledged", handleEngagementAck);
       socket.emit("leave:session", { sessionId });
     };
   }, [socket, sessionId, fetchLiveSession, navigate]);
+
+  // Engagement ping countdown timer
+  useEffect(() => {
+    if (!activePing) return;
+    const interval = setInterval(() => {
+      setPingCountdown((prev) => {
+        if (prev <= 1) {
+          clearInterval(interval);
+          setActivePing(null);
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+    return () => clearInterval(interval);
+  }, [activePing]);
+
+  const handleTriggerEngagement = async () => {
+    if (!sessionId) return;
+    setTriggeringPing(true);
+    try {
+      const res = await api.post(`/faculty/sessions/${sessionId}/engagement-ping`);
+      if (res.data?.success) {
+        setActivePing({
+          code: res.data.code,
+          respondedCount: 0,
+        });
+        setPingCountdown(res.data.durationSeconds || 60);
+        toast.success(`Active engagement challenge code: ${res.data.code}`);
+      }
+    } catch (err) {
+      toast.error(err.response?.data?.message || "Failed to trigger ping");
+    } finally {
+      setTriggeringPing(false);
+    }
+  };
 
   const handleEndSession = async () => {
     if (!confirm("End this lecture session? The QR token will be deactivated."))
@@ -244,6 +292,53 @@ export default function LiveAttendance() {
             Enrolled
           </p>
           <h4 className="text-xl font-black text-slate-200 mt-1">{stats?.totalEnrolled || 0}</h4>
+        </div>
+      </div>
+
+      {/* Online / Hybrid Engagement Challenge Radar */}
+      <div className="card p-5 border border-indigo-500/30 bg-indigo-500/5">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div className="flex items-center gap-3.5">
+            <div className="p-3 rounded-2xl bg-indigo-500/15 border border-indigo-500/30 text-indigo-400">
+              <Zap className="w-5 h-5 animate-pulse" />
+            </div>
+            <div>
+              <div className="flex items-center gap-2">
+                <h4 className="text-sm font-bold text-white">
+                  Online &amp; Hybrid Attendance Engagement Radar
+                </h4>
+                <Badge variant="brand" size="sm">Anti-Proxy Ping</Badge>
+              </div>
+              <p className="text-xs text-slate-400 mt-0.5">
+                Broadcast an attention challenge to ensure remote students are actively participating at their devices.
+              </p>
+            </div>
+          </div>
+
+          <div>
+            {activePing ? (
+              <div className="flex items-center gap-3 bg-slate-950 p-2.5 px-4 rounded-xl border border-indigo-500/40">
+                <div className="text-right">
+                  <div className="text-xs font-mono font-bold text-amber-400 flex items-center gap-1.5">
+                    <Timer className="w-3.5 h-3.5 animate-spin" />
+                    <span>{pingCountdown}s remaining</span>
+                  </div>
+                  <p className="text-[11px] text-slate-400">
+                    Code: <strong className="text-white font-mono text-xs">{activePing.code}</strong> • {activePing.respondedCount || 0} / {stats?.totalEnrolled || 0} Confirmed
+                  </p>
+                </div>
+              </div>
+            ) : (
+              <button
+                onClick={handleTriggerEngagement}
+                disabled={triggeringPing || Boolean(session.endTime)}
+                className="btn-primary flex items-center gap-2 text-xs px-4 py-2"
+              >
+                <Zap className="w-3.5 h-3.5" />
+                <span>{triggeringPing ? "Broadcasting..." : "Broadcast 60s Engagement Ping"}</span>
+              </button>
+            )}
+          </div>
         </div>
       </div>
 

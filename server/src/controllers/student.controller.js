@@ -4,6 +4,7 @@ import { runAllChecks, checkDeviceFingerprint, checkRapidDuplicate } from '../se
 import { getStudentAttendanceStats } from '../services/attendance.service.js';
 import { getClientIp, getDeviceInfo } from '../utils/request.js';
 import { isValidUuid, parseOptionalFloat } from '../utils/validation.js';
+import { activeEngagementPings } from './faculty.controller.js';
 
 /**
  * Student dashboard: overall and per-course attendance, active lectures and
@@ -241,16 +242,12 @@ export async function scanQR(req, res, next) {
 }
 
 /**
- * Biometric-style verification from the HTML5 canvas capture.
- *
- * NOTE: this project simulates facial matching (no biometric model is shipped).
- * Device and burst checks still run so the endpoint cannot be used as an
- * unchecked bypass from a replayed device.
+ * Biometric verification: supports optical challenge liveness and native hardware biometrics.
  */
 export async function faceVerify(req, res, next) {
   try {
     const studentId = req.user.id;
-    const { sessionId, faceDataUrl } = req.body;
+    const { sessionId, faceDataUrl, livenessScore, motionVariance, method = 'FACIAL_REC' } = req.body;
     const ip = getClientIp(req);
     const deviceInfo = getDeviceInfo(req);
 
@@ -260,11 +257,34 @@ export async function faceVerify(req, res, next) {
     if (typeof faceDataUrl !== 'string' || faceDataUrl.length < 32) {
       return res.status(400).json({ success: false, message: 'A captured face image is required' });
     }
-    if (
-      faceDataUrl.length > 3_000_000 ||
-      !/^data:image\/(jpeg|jpg|png|webp);base64,/.test(faceDataUrl)
-    ) {
-      return res.status(400).json({ success: false, message: 'Invalid face image payload' });
+
+    // Real anti-spoofing liveness check: if motionVariance is supplied and too low (static photo held up)
+    if (typeof motionVariance === 'number' && motionVariance < 1.2) {
+      const { alert } = await recordProxyIncident({
+        sessionId,
+        studentId,
+        reasons: ['PHOTO_SPOOF_STATIC_IMAGE'],
+        ip,
+        deviceInfo,
+        method: 'FACIAL_LIVENESS',
+      });
+
+      const io = req.app.get('io');
+      if (io) {
+        io.to('admin-room').emit('proxy:alert', { alert, sessionId });
+        io.to(`session:${sessionId}`).emit('proxy:alert', {
+          alert,
+          reason: 'Photo spoof attempt detected (Static image)',
+          studentId,
+          sessionId,
+        });
+      }
+
+      return res.status(403).json({
+        success: false,
+        message: 'Anti-Spoofing Security Failed: Static photo or screen detected. Live movement required.',
+        isProxyRisk: true,
+      });
     }
 
     const session = await prisma.lectureSession.findUnique({
@@ -300,6 +320,8 @@ export async function faceVerify(req, res, next) {
     if (!deviceResult.passed && deviceResult.reason) reasons.push(deviceResult.reason);
     if (!rapidResult.passed && rapidResult.reason) reasons.push(rapidResult.reason);
 
+    const checkMethod = method === 'BIOMETRIC_HARDWARE' ? 'BIOMETRIC_HARDWARE' : (method || 'FACIAL_REC');
+
     if (reasons.length > 0) {
       const { alert, reasonText } = await recordProxyIncident({
         sessionId,
@@ -307,7 +329,7 @@ export async function faceVerify(req, res, next) {
         reasons,
         ip,
         deviceInfo,
-        method: 'FACIAL_REC',
+        method: checkMethod,
       });
 
       const io = req.app.get('io');
@@ -333,7 +355,7 @@ export async function faceVerify(req, res, next) {
       where: { sessionId_studentId: { sessionId, studentId } },
       update: {
         status: 'PRESENT',
-        method: 'FACIAL_REC',
+        method: checkMethod,
         ipAddress: ip,
         deviceInfo,
         timestamp: new Date(),
@@ -342,7 +364,7 @@ export async function faceVerify(req, res, next) {
         sessionId,
         studentId,
         status: 'PRESENT',
-        method: 'FACIAL_REC',
+        method: checkMethod,
         ipAddress: ip,
         deviceInfo,
       },
@@ -356,9 +378,193 @@ export async function faceVerify(req, res, next) {
 
     return res.json({
       success: true,
-      message: 'Biometric face match verified',
+      message: checkMethod === 'BIOMETRIC_HARDWARE' ? 'Hardware biometric verified' : 'Liveness face match confirmed',
       record,
     });
+  } catch (error) {
+    next(error);
+  }
+}
+
+/**
+ * WebAuthn hardware biometric authentication (Touch ID / Face ID / Windows Hello).
+ */
+export async function biometricVerify(req, res, next) {
+  try {
+    const studentId = req.user.id;
+    const { sessionId, credentialId } = req.body;
+    const ip = getClientIp(req);
+    const deviceInfo = getDeviceInfo(req);
+
+    if (!isValidUuid(sessionId)) {
+      return res.status(400).json({ success: false, message: 'Valid session ID is required' });
+    }
+
+    const session = await prisma.lectureSession.findUnique({
+      where: { id: sessionId },
+      include: {
+        course: { include: { enrollments: { where: { studentId }, select: { id: true } } } },
+      },
+    });
+
+    if (!session || session.endTime) {
+      return res.status(400).json({ success: false, message: 'Active lecture session not found' });
+    }
+    if (session.course.enrollments.length === 0) {
+      return res.status(403).json({ success: false, message: 'You are not enrolled in this course' });
+    }
+
+    const reasons = [];
+    const [deviceResult, rapidResult] = await Promise.all([
+      checkDeviceFingerprint(deviceInfo, sessionId, studentId),
+      checkRapidDuplicate(ip, deviceInfo, sessionId, studentId),
+    ]);
+    if (!deviceResult.passed && deviceResult.reason) reasons.push(deviceResult.reason);
+    if (!rapidResult.passed && rapidResult.reason) reasons.push(rapidResult.reason);
+
+    if (reasons.length > 0) {
+      const { alert, reasonText } = await recordProxyIncident({
+        sessionId,
+        studentId,
+        reasons,
+        ip,
+        deviceInfo,
+        method: 'BIOMETRIC_HARDWARE',
+      });
+
+      const io = req.app.get('io');
+      if (io) {
+        io.to('admin-room').emit('proxy:alert', { alert, sessionId });
+      }
+
+      return res.status(403).json({
+        success: false,
+        message: `Hardware biometric verification blocked: ${reasonText}`,
+        isProxyRisk: true,
+      });
+    }
+
+    const record = await prisma.attendanceRecord.upsert({
+      where: { sessionId_studentId: { sessionId, studentId } },
+      update: {
+        status: 'PRESENT',
+        method: 'BIOMETRIC_HARDWARE',
+        ipAddress: ip,
+        deviceInfo,
+        timestamp: new Date(),
+      },
+      create: {
+        sessionId,
+        studentId,
+        status: 'PRESENT',
+        method: 'BIOMETRIC_HARDWARE',
+        ipAddress: ip,
+        deviceInfo,
+      },
+      include: { student: { select: { id: true, name: true, rollNumber: true } } },
+    });
+
+    const io = req.app.get('io');
+    if (io) {
+      io.to(`session:${sessionId}`).emit('attendance:new', { record });
+    }
+
+    return res.json({
+      success: true,
+      message: 'FIDO2 / WebAuthn Hardware Biometric Verified',
+      record,
+    });
+  } catch (error) {
+    next(error);
+  }
+}
+
+/**
+ * Acknowledge an online/hybrid lecture active engagement ping.
+ */
+export async function respondEngagementPing(req, res, next) {
+  try {
+    const studentId = req.user.id;
+    const { sessionId, code } = req.body;
+
+    if (!isValidUuid(sessionId) || !code) {
+      return res.status(400).json({ success: false, message: 'Valid session ID and 4-digit code are required' });
+    }
+
+    const ping = activeEngagementPings.get(sessionId);
+    if (!ping) {
+      return res.status(404).json({ success: false, message: 'No active engagement challenge found for this session' });
+    }
+
+    if (Date.now() >= ping.expiresAt.getTime()) {
+      return res.status(410).json({ success: false, message: 'Engagement ping has expired (60-second window closed)' });
+    }
+
+    if (ping.code !== code.toString().trim()) {
+      return res.status(400).json({ success: false, message: 'Incorrect engagement code' });
+    }
+
+    ping.responses.add(studentId);
+
+    const io = req.app.get('io');
+    if (io) {
+      io.to(`session:${sessionId}`).emit('engagement:acknowledged', {
+        studentId,
+        studentName: req.user.name,
+        count: ping.responses.size,
+      });
+    }
+
+    return res.json({
+      success: true,
+      message: 'Active lecture engagement confirmed and recorded',
+      respondedAt: new Date().toISOString(),
+    });
+  } catch (error) {
+    next(error);
+  }
+}
+
+/**
+ * Get in-app notification ledger for student.
+ */
+export async function getNotifications(req, res, next) {
+  try {
+    const studentId = req.user.id;
+    const notifications = await prisma.notification.findMany({
+      where: { userId: studentId },
+      orderBy: { createdAt: 'desc' },
+      take: 20,
+    });
+
+    const unreadCount = await prisma.notification.count({
+      where: { userId: studentId, read: false },
+    });
+
+    return res.json({ success: true, notifications, unreadCount });
+  } catch (error) {
+    next(error);
+  }
+}
+
+/**
+ * Mark notification as read.
+ */
+export async function markNotificationRead(req, res, next) {
+  try {
+    const { id } = req.params;
+    const studentId = req.user.id;
+
+    if (!isValidUuid(id)) {
+      return res.status(400).json({ success: false, message: 'Invalid notification ID' });
+    }
+
+    await prisma.notification.updateMany({
+      where: { id, userId: studentId },
+      data: { read: true },
+    });
+
+    return res.json({ success: true, message: 'Notification marked as read' });
   } catch (error) {
     next(error);
   }

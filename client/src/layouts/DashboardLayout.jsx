@@ -8,6 +8,8 @@ import {
   X,
 } from "lucide-react";
 import Sidebar from "./Sidebar";
+import NotificationBell from "../components/common/NotificationBell";
+import EngagementPrompt from "../components/attendance/EngagementPrompt";
 import { useAuth } from "../hooks/useAuth";
 import { useSocket } from "../hooks/useSocket";
 
@@ -76,6 +78,8 @@ export default function DashboardLayout() {
           </div>
 
           <div className="flex items-center gap-3">
+            <NotificationBell />
+
             <div className="text-right hidden sm:block">
               <p className="text-sm font-semibold text-white leading-tight">{user?.name}</p>
               <p className="text-xs text-slate-500 leading-tight">
@@ -96,6 +100,7 @@ export default function DashboardLayout() {
         <main className="flex-1 overflow-y-auto p-4 lg:p-8 bg-slate-950">
           <Outlet />
         </main>
+        <EngagementPrompt />
       </div>
     </div>
   );
