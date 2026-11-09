@@ -69,21 +69,20 @@ export default function Sidebar({ onCloseMobile }) {
       </div>
 
       {/* Navigation */}
-      <nav className="flex-1 px-4 py-5 space-y-0.5 overflow-y-auto">
+      <nav className="flex-1 px-4 py-5 space-y-1 overflow-y-auto">
         {links.map((item) => {
-          const isActive = item.path === "/admin" || item.path === "/faculty" || item.path === "/student"
-            ? false
-            : false;
+          const isExactRoot = item.path === "/admin" || item.path === "/faculty" || item.path === "/student";
 
           return (
             <NavLink
               key={item.path}
               to={item.path}
+              end={isExactRoot}
               onClick={onCloseMobile}
               className={({ isActive }) =>
                 `flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 ${
                   isActive
-                    ? "bg-brand-500/15 text-brand-400 border border-brand-500/30 shadow-md shadow-brand-500/10 font-semibold"
+                    ? "bg-brand-500/15 text-brand-300 border border-brand-500/30 shadow-md shadow-brand-500/10 font-semibold"
                     : "text-slate-400 hover:text-slate-200 hover:bg-slate-800/50"
                 }`
               }
