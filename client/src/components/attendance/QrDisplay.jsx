@@ -74,21 +74,19 @@ export default function QrDisplay({ sessionId, initialToken, sessionName, sessio
   }, [token]);
 
   return (
-    <div className="flex flex-col items-center justify-center p-6 bg-slate-900 border border-slate-800 rounded-3xl shadow-2xl relative overflow-hidden">
-      <div className="absolute -top-12 -right-12 w-40 h-40 bg-indigo-500/10 rounded-full blur-2xl pointer-events-none" />
-
-      <div className="w-full flex items-center justify-between mb-6 pb-4 border-b border-slate-800">
+    <div className="flex flex-col items-center justify-center p-6 bg-white border border-sky-100 rounded-3xl shadow-sm relative overflow-hidden">
+      <div className="w-full flex items-center justify-between mb-6 pb-4 border-b border-sky-100">
         <div className="flex items-center gap-2">
-          <Shield className="w-5 h-5 text-indigo-400" />
-          <span className="text-sm font-bold text-white tracking-wide">
+          <Shield className="w-5 h-5 text-sky-500" />
+          <span className="text-sm font-bold text-sky-950 tracking-wide">
             Dynamic Cryptographic QR
           </span>
         </div>
         <div
           className={`flex items-center gap-1.5 px-3 py-1 border rounded-full text-xs font-semibold ${
             isEnded
-              ? 'bg-slate-800 border-slate-700 text-slate-400'
-              : 'bg-indigo-500/15 border-indigo-500/30 text-indigo-400'
+              ? 'bg-slate-100 border-slate-200 text-slate-500'
+              : 'bg-sky-50 border-sky-200 text-sky-600'
           }`}
         >
           {isEnded ? (
@@ -105,13 +103,13 @@ export default function QrDisplay({ sessionId, initialToken, sessionName, sessio
         </div>
       </div>
 
-      <div className="p-4 bg-white rounded-2xl shadow-xl flex items-center justify-center relative transition-all duration-300">
+      <div className="p-4 bg-sky-50/40 rounded-2xl border border-sky-100 shadow-sm flex items-center justify-center relative transition-all duration-300">
         {token && !isEnded ? (
           <QRCodeSVG value={token} size={220} level="H" marginSize={2} />
         ) : (
-          <div className="w-56 h-56 flex flex-col items-center justify-center text-slate-400 gap-2">
-            <RefreshCw className={`w-8 h-8 text-indigo-500 ${isEnded ? '' : 'animate-spin'}`} />
-            <span className="text-xs">{isEnded ? 'Session ended' : 'Generating token...'}</span>
+          <div className="w-56 h-56 flex flex-col items-center justify-center text-sky-400 gap-2">
+            <RefreshCw className={`w-8 h-8 text-sky-500 ${isEnded ? '' : 'animate-spin'}`} />
+            <span className="text-xs font-medium">{isEnded ? 'Session ended' : 'Generating token...'}</span>
           </div>
         )}
       </div>
@@ -120,29 +118,29 @@ export default function QrDisplay({ sessionId, initialToken, sessionName, sessio
         <button
           onClick={handleCopyToken}
           disabled={!token || isEnded}
-          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white border border-slate-700 text-xs font-medium transition disabled:opacity-40"
+          className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-white hover:bg-sky-50 text-sky-700 border border-sky-200 text-xs font-semibold transition shadow-sm disabled:opacity-40"
         >
           {copied ? (
-            <Check className="w-3.5 h-3.5 text-emerald-400" />
+            <Check className="w-3.5 h-3.5 text-emerald-600" />
           ) : (
-            <Copy className="w-3.5 h-3.5 text-slate-400" />
+            <Copy className="w-3.5 h-3.5 text-sky-500" />
           )}
           <span>{copied ? 'Token copied!' : 'Copy active token (quick test)'}</span>
         </button>
 
-        <p className="text-xs text-slate-400 max-w-xs">
-          The token rotates every few seconds over Socket.io with a SHA-256 signature, so
+        <p className="text-xs text-sky-600/90 font-medium max-w-xs">
+          The token rotates every few seconds over Socket.io with an HMAC-SHA256 signature, so
           screenshots and forwarded images expire almost immediately.
         </p>
 
         {!connected && (
-          <div className="inline-flex items-center gap-1.5 text-[11px] text-amber-400">
+          <div className="inline-flex items-center gap-1.5 text-[11px] text-amber-600 font-medium">
             <WifiOff className="w-3.5 h-3.5" />
             <span>Real-time connection lost — the code will not rotate until reconnected.</span>
           </div>
         )}
 
-        <div className="text-[11px] font-mono text-slate-500">
+        <div className="text-[11px] font-mono text-sky-500 font-medium">
           Refreshed: #{refreshCount} cycles | Session: {sessionName || sessionId?.slice(0, 8)}
         </div>
       </div>

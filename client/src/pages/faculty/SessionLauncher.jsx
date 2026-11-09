@@ -78,24 +78,24 @@ export default function SessionLauncher() {
   return (
     <div className="max-w-2xl mx-auto space-y-6">
       <div>
-        <h2 className="text-2xl font-black text-white tracking-tight flex items-center gap-2.5">
-          <Rocket className="w-7 h-7 text-indigo-400" />
+        <h2 className="text-2xl font-black text-sky-950 tracking-tight flex items-center gap-2.5">
+          <Rocket className="w-7 h-7 text-sky-500" />
           <span>Launch Classroom Session</span>
         </h2>
-        <p className="text-xs text-slate-400 mt-1">
+        <p className="text-xs text-sky-700/80 mt-1">
           Initiate rolling dynamic QR attendance, AI face rec, or hybrid video watermarking.
         </p>
       </div>
 
-      <form onSubmit={handleLaunch} className="bg-slate-900 border border-slate-800 rounded-3xl p-6 sm:p-8 shadow-2xl space-y-6">
+      <form onSubmit={handleLaunch} className="bg-white border border-sky-100 rounded-3xl p-6 sm:p-8 shadow-sm space-y-6">
         {/* Course Select */}
         <div>
-          <label className="block text-xs font-semibold text-slate-300 mb-2">Target Course</label>
+          <label className="block text-xs font-semibold text-sky-900 mb-2">Target Course</label>
           <select
             value={form.courseId}
             onChange={(e) => setForm({ ...form, courseId: e.target.value })}
             required
-            className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:ring-2 focus:ring-indigo-500/50"
+            className="w-full bg-white border border-sky-200 rounded-xl px-4 py-2.5 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-sky-400/50"
           >
             {courses.map((c) => (
               <option key={c.id} value={c.id}>
@@ -107,7 +107,7 @@ export default function SessionLauncher() {
 
         {/* Session Type */}
         <div>
-          <label className="block text-xs font-semibold text-slate-300 mb-2">Attendance Engine Mode</label>
+          <label className="block text-xs font-semibold text-sky-900 mb-2">Attendance Engine Mode</label>
           <div className="grid grid-cols-3 gap-3">
             {[
               { id: 'IN_PERSON', label: 'In-Person', desc: 'Geofenced Rolling QR & Face Rec', icon: Users },
@@ -115,21 +115,22 @@ export default function SessionLauncher() {
               { id: 'ONLINE', label: 'Online', desc: 'In-Video Watermark Stream', icon: Video },
             ].map((type) => {
               const Icon = type.icon;
+              const isSelected = form.sessionType === type.id;
               return (
                 <button
                   key={type.id}
                   type="button"
                   onClick={() => setForm({ ...form, sessionType: type.id })}
                   className={`p-3.5 rounded-2xl border text-left flex flex-col justify-between transition ${
-                    form.sessionType === type.id
-                      ? 'bg-indigo-600/20 border-indigo-500 text-white shadow-lg shadow-indigo-600/10'
-                      : 'bg-slate-950/60 border-slate-800 text-slate-400 hover:text-slate-200'
+                    isSelected
+                      ? 'bg-sky-50 border-sky-400 text-sky-950 shadow-sm ring-2 ring-sky-400/20'
+                      : 'bg-white border-sky-100 text-slate-600 hover:text-sky-800 hover:border-sky-200'
                   }`}
                 >
-                  <Icon className={`w-5 h-5 mb-2 ${form.sessionType === type.id ? 'text-indigo-400' : 'text-slate-500'}`} />
+                  <Icon className={`w-5 h-5 mb-2 ${isSelected ? 'text-sky-600' : 'text-slate-400'}`} />
                   <div>
-                    <p className="text-xs font-bold text-white">{type.label}</p>
-                    <p className="text-[10px] text-slate-400 mt-0.5 line-clamp-1">{type.desc}</p>
+                    <p className={`text-xs font-bold ${isSelected ? 'text-sky-950' : 'text-slate-800'}`}>{type.label}</p>
+                    <p className="text-[10px] text-sky-600/80 mt-0.5 line-clamp-1">{type.desc}</p>
                   </div>
                 </button>
               );
@@ -139,13 +140,13 @@ export default function SessionLauncher() {
 
         {/* Geofence Settings (in-person only) */}
         {form.sessionType === 'IN_PERSON' ? (
-          <div className="p-4 rounded-2xl bg-slate-950/60 border border-slate-800 space-y-4">
+          <div className="p-4 rounded-2xl bg-sky-50/50 border border-sky-100 space-y-4">
             <div className="flex items-center justify-between">
-              <span className="text-xs font-bold text-slate-300 flex items-center gap-1.5">
-                <Shield className="w-4 h-4 text-emerald-400" />
+              <span className="text-xs font-bold text-sky-950 flex items-center gap-1.5">
+                <Shield className="w-4 h-4 text-emerald-600" />
                 <span>Anti-Proxy Geofence Radius</span>
               </span>
-              <span className="text-xs font-bold text-emerald-400 px-2 py-0.5 rounded bg-emerald-500/10 border border-emerald-500/20">
+              <span className="text-xs font-bold text-emerald-700 px-2.5 py-0.5 rounded-full bg-emerald-50 border border-emerald-200">
                 {form.radiusMeters} Meters
               </span>
             </div>
@@ -157,28 +158,28 @@ export default function SessionLauncher() {
               step={5}
               value={form.radiusMeters}
               onChange={(e) => setForm({ ...form, radiusMeters: Number(e.target.value) })}
-              className="w-full accent-indigo-500 cursor-pointer"
+              className="w-full accent-sky-500 cursor-pointer"
             />
 
-            <div className="flex items-center justify-between text-[11px] text-slate-500">
+            <div className="flex items-center justify-between text-[11px] text-slate-500 font-medium">
               <span>20m (Strict Classroom)</span>
               <span>50m (Standard Hall)</span>
               <span>200m (Campus Wide)</span>
             </div>
 
-            <div className="pt-2 border-t border-slate-800 flex items-center gap-2 text-xs text-slate-400">
-              <MapPin className="w-3.5 h-3.5 text-indigo-400 flex-shrink-0" />
+            <div className="pt-2 border-t border-sky-100 flex items-center gap-2 text-xs text-sky-800 font-medium">
+              <MapPin className="w-3.5 h-3.5 text-sky-500 flex-shrink-0" />
               <span>
                 Anchor Coordinates: {form.latitude.toFixed(4)}, {form.longitude.toFixed(4)}
               </span>
             </div>
           </div>
         ) : (
-          <div className="p-4 rounded-2xl bg-slate-950/60 border border-slate-800 flex items-start gap-2.5">
-            <Shield className="w-4 h-4 text-indigo-400 flex-shrink-0 mt-0.5" />
-            <div className="text-xs text-slate-400">
-              <p className="font-bold text-slate-200">Remote check-in mode</p>
-              <p className="mt-1">
+          <div className="p-4 rounded-2xl bg-sky-50/50 border border-sky-100 flex items-start gap-2.5">
+            <Shield className="w-4 h-4 text-sky-500 flex-shrink-0 mt-0.5" />
+            <div className="text-xs text-sky-900">
+              <p className="font-bold text-sky-950">Remote check-in mode</p>
+              <p className="mt-1 text-sky-700/80">
                 The classroom geofence is disabled for {form.sessionType.toLowerCase()} lectures.
                 Rolling QR, device fingerprint and rapid-reuse checks remain active.
               </p>
@@ -190,14 +191,14 @@ export default function SessionLauncher() {
         <button
           type="submit"
           disabled={submitting}
-          className="w-full py-3.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-sm shadow-xl shadow-indigo-600/25 transition flex items-center justify-center gap-2 disabled:opacity-50"
+          className="btn-primary w-full py-3.5 rounded-xl font-bold text-sm shadow-md shadow-sky-500/25 transition flex items-center justify-center gap-2 disabled:opacity-50"
         >
           {submitting ? (
             <span>Generating Cryptographic Session Keys...</span>
           ) : (
             <>
               <Rocket className="w-4 h-4" />
-              <span>Start Lecture & Project Dynamic QR</span>
+              <span>Start Lecture &amp; Project Dynamic QR</span>
             </>
           )}
         </button>
@@ -205,4 +206,3 @@ export default function SessionLauncher() {
     </div>
   );
 }
-

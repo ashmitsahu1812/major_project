@@ -33,25 +33,25 @@ export default function FaceVerify() {
   return (
     <div className="space-y-6 max-w-4xl mx-auto">
       <div className="text-center space-y-1">
-        <h2 className="text-2xl font-black text-white tracking-tight flex items-center justify-center gap-2">
-          <ScanFace className="w-7 h-7 text-indigo-400" />
+        <h2 className="text-2xl font-black text-sky-950 tracking-tight flex items-center justify-center gap-2">
+          <ScanFace className="w-7 h-7 text-sky-500" />
           <span>AI Biometric Face Verification Terminal</span>
         </h2>
-        <p className="text-xs text-slate-400 max-w-md mx-auto">
-          Capture live facial landmarks via HTML5 WebRTC & Canvas neural bounding box detection.
+        <p className="text-xs text-sky-700/80 max-w-md mx-auto">
+          Capture live facial landmarks via HTML5 WebRTC &amp; Canvas neural bounding box detection.
         </p>
       </div>
 
       {/* Session Selection */}
-      <div className="max-w-md mx-auto bg-slate-900 border border-slate-800 p-4 rounded-2xl">
-        <label className="block text-xs font-semibold text-slate-300 mb-1.5">
+      <div className="max-w-md mx-auto bg-white border border-sky-100 p-4 rounded-2xl shadow-sm">
+        <label className="block text-xs font-semibold text-sky-900 mb-1.5">
           Select Active Lecture Session
         </label>
         {activeSessions.length > 0 ? (
           <select
             value={selectedSessionId}
             onChange={(e) => setSelectedSessionId(e.target.value)}
-            className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2 text-xs text-white focus:outline-none focus:ring-2 focus:ring-indigo-500/50"
+            className="w-full bg-white border border-sky-200 rounded-xl px-3.5 py-2 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-sky-400/50"
           >
             {activeSessions.map((s) => (
               <option key={s.id} value={s.id}>
@@ -60,7 +60,7 @@ export default function FaceVerify() {
             ))}
           </select>
         ) : (
-          <p className="text-xs text-amber-400">
+          <p className="text-xs text-amber-700 font-medium">
             No live lecture sessions active right now. Have faculty start a session first.
           </p>
         )}
@@ -69,10 +69,10 @@ export default function FaceVerify() {
       {activeSessions.length > 0 ? (
         <FaceCapture sessionId={selectedSessionId} />
       ) : (
-        <div className="max-w-lg mx-auto p-8 rounded-3xl border border-dashed border-slate-800 bg-slate-900/40 text-center">
-          <ScanFace className="w-10 h-10 text-slate-600 mx-auto mb-3" />
-          <p className="text-sm font-semibold text-slate-300">No active lecture session</p>
-          <p className="text-xs text-slate-500 mt-1">
+        <div className="max-w-lg mx-auto p-8 rounded-3xl border-2 border-dashed border-sky-200 bg-white text-center shadow-xs">
+          <ScanFace className="w-10 h-10 text-sky-400 mx-auto mb-3" />
+          <p className="text-sm font-bold text-sky-950">No active lecture session</p>
+          <p className="text-xs text-sky-600/70 mt-1">
             Face verification becomes available when a faculty member starts a session for one of
             your courses.
           </p>
@@ -81,4 +81,3 @@ export default function FaceVerify() {
     </div>
   );
 }
-

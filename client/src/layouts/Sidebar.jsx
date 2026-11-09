@@ -42,26 +42,26 @@ export default function Sidebar({ onCloseMobile }) {
   const links = navLinks[user?.role] || [];
 
   return (
-    <aside className="flex flex-col h-full w-64 bg-slate-900/95 border-r border-slate-800/80 select-none overflow-hidden">
+    <aside className="flex flex-col h-full w-64 bg-white border-r border-sky-100 select-none overflow-hidden">
       {/* Brand */}
-      <div className="p-5 border-b border-slate-800/80 flex items-center gap-3">
-        <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-brand-600 via-brand-500 to-accent-500 flex items-center justify-center shadow-lg shadow-brand-900/20 text-white">
+      <div className="p-5 border-b border-sky-100 flex items-center gap-3 bg-white">
+        <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-sky-500 to-blue-600 flex items-center justify-center shadow-md shadow-sky-500/20 text-white">
           <GraduationCap className="w-6 h-6" />
         </div>
         <div>
-          <h1 className="text-lg font-black tracking-tight text-white">
-            Edu<span className="text-brand-400">Pulse</span>
+          <h1 className="text-lg font-black tracking-tight text-sky-950">
+            Edu<span className="text-sky-500">Pulse</span>
           </h1>
-          <p className="text-[11px] font-semibold uppercase tracking-widest text-slate-500 mt-0.5">
-            Attendance Engine
+          <p className="text-[11px] font-bold uppercase tracking-widest text-sky-500/90 mt-0.5">
+            Smart Attendance
           </p>
         </div>
       </div>
 
       {/* Role Banner */}
-      <div className="px-5 py-4 border-b border-slate-800/50 bg-slate-950/40 flex items-center justify-between">
-        <span className="text-[11px] font-semibold uppercase tracking-widest text-slate-500">
-          Portal Mode
+      <div className="px-5 py-3.5 border-b border-sky-100 bg-sky-50/50 flex items-center justify-between">
+        <span className="text-[11px] font-bold uppercase tracking-widest text-sky-600">
+          Portal View
         </span>
         <Badge variant="brand" size="sm">
           {user?.role}
@@ -69,7 +69,7 @@ export default function Sidebar({ onCloseMobile }) {
       </div>
 
       {/* Navigation */}
-      <nav className="flex-1 px-4 py-5 space-y-1 overflow-y-auto">
+      <nav className="flex-1 px-3.5 py-4 space-y-1 overflow-y-auto">
         {links.map((item) => {
           const isExactRoot = item.path === "/admin" || item.path === "/faculty" || item.path === "/student";
 
@@ -80,10 +80,10 @@ export default function Sidebar({ onCloseMobile }) {
               end={isExactRoot}
               onClick={onCloseMobile}
               className={({ isActive }) =>
-                `flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 ${
+                `flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-semibold transition-all duration-200 ${
                   isActive
-                    ? "bg-brand-500/15 text-brand-300 border border-brand-500/30 shadow-md shadow-brand-500/10 font-semibold"
-                    : "text-slate-400 hover:text-slate-200 hover:bg-slate-800/50"
+                    ? "bg-sky-50 text-sky-600 border border-sky-200 shadow-sm shadow-sky-100 font-bold"
+                    : "text-sky-800/80 hover:text-sky-600 hover:bg-sky-50/60"
                 }`
               }
             >
@@ -95,16 +95,16 @@ export default function Sidebar({ onCloseMobile }) {
       </nav>
 
       {/* User Area */}
-      <div className="p-4 border-t border-slate-800/80 bg-slate-950/40">
+      <div className="p-4 border-t border-sky-100 bg-sky-50/30">
         <div className="flex items-center gap-3">
           <img
             src={user?.avatarUrl || `https://api.dicebear.com/7.x/avataaars/svg?seed=${user?.name}`}
             alt="Avatar"
-            className="w-10 h-10 rounded-full bg-slate-800/80 border border-slate-700/60 object-cover"
+            className="w-10 h-10 rounded-full bg-sky-100 border border-sky-200 object-cover"
           />
           <div className="overflow-hidden">
-            <p className="text-sm font-semibold text-white truncate">{user?.name}</p>
-            <p className="text-xs text-slate-500 truncate">{user?.email}</p>
+            <p className="text-sm font-bold text-sky-950 truncate">{user?.name}</p>
+            <p className="text-xs text-sky-500 truncate font-medium">{user?.email}</p>
           </div>
         </div>
       </div>

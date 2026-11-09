@@ -77,7 +77,7 @@ export default function ManageCourses() {
       header: "Code",
       key: "code",
       render: (row) => (
-        <span className="font-bold text-indigo-400 text-sm px-2.5 py-1 rounded-lg bg-indigo-500/15 border border-indigo-500/30">
+        <span className="font-bold text-sky-700 text-sm px-2.5 py-1 rounded-lg bg-sky-50 border border-sky-200">
           {row.code}
         </span>
       ),
@@ -85,26 +85,26 @@ export default function ManageCourses() {
     {
       header: "Course Name",
       key: "name",
-      render: (row) => <span className="font-semibold text-white text-sm">{row.name}</span>,
+      render: (row) => <span className="font-bold text-sky-950 text-sm">{row.name}</span>,
     },
     {
       header: "Department",
       key: "department",
-      render: (row) => <span className="text-xs text-slate-400">{row.department}</span>,
+      render: (row) => <span className="text-xs text-slate-500 font-medium">{row.department}</span>,
     },
     {
       header: "Faculty",
       key: "faculty",
       accessor: (row) => row.faculty?.name,
-      render: (row) => <span className="text-xs text-slate-300">{row.faculty?.name || "Unassigned"}</span>,
+      render: (row) => <span className="text-xs text-sky-800 font-semibold">{row.faculty?.name || "Unassigned"}</span>,
     },
     {
       header: "Students",
       key: "enrollments",
       accessor: (row) => row._count?.enrollments || 0,
       render: (row) => (
-        <span className="text-xs font-bold text-slate-300 flex items-center gap-1.5">
-          <Users className="w-3.5 h-3.5 text-indigo-400" />
+        <span className="text-xs font-bold text-sky-950 flex items-center gap-1.5">
+          <Users className="w-3.5 h-3.5 text-sky-500" />
           {row._count?.enrollments || 0}
         </span>
       ),
@@ -121,14 +121,14 @@ export default function ManageCourses() {
               setEnrollModalOpen(true);
             }}
             title="Enroll student"
-            className="p-2 rounded-lg bg-indigo-500/15 border border-indigo-500/30 text-indigo-400 hover:bg-indigo-500/25 transition-colors"
+            className="p-2 rounded-lg bg-sky-50 border border-sky-200 text-sky-700 hover:bg-sky-100 transition-colors"
           >
             <UserPlus className="w-4 h-4" />
           </button>
           <button
             onClick={() => setConfirmDelete(row.id)}
             title="Delete course"
-            className="p-2 rounded-lg bg-rose-500/15 border border-rose-500/30 text-rose-400 hover:bg-rose-500/25 transition-colors"
+            className="p-2 rounded-lg bg-rose-50 border border-rose-200 text-rose-700 hover:bg-rose-100 transition-colors"
           >
             <Trash2 className="w-4 h-4" />
           </button>
@@ -141,11 +141,11 @@ export default function ManageCourses() {
     <div className="space-y-6 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h2 className="text-2xl font-black text-white tracking-tight flex items-center gap-2.5">
-            <BookOpen className="w-7 h-7 text-indigo-400" />
-            Course Catalog
+          <h2 className="text-2xl font-black text-sky-950 tracking-tight flex items-center gap-2.5">
+            <BookOpen className="w-7 h-7 text-sky-500" />
+            <span>Course Catalog</span>
           </h2>
-          <p className="text-sm text-slate-400 mt-1.5">
+          <p className="text-sm text-sky-700/80 mt-1.5">
             Configure subjects, assign faculty leads, and manage student batch enrollments.
           </p>
         </div>
@@ -154,7 +154,7 @@ export default function ManageCourses() {
           className="btn-primary flex items-center gap-2"
         >
           <Plus className="w-4 h-4" />
-          Create Course
+          <span>Create Course</span>
         </button>
       </div>
 
@@ -223,46 +223,46 @@ function CreateCourseModal({ isOpen, onClose, facultyList, onCreate }) {
     <Modal isOpen={isOpen} onClose={onClose} title="Add New Course">
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
-          <label className="label">Course Code</label>
+          <label className="block text-xs font-semibold text-sky-900 mb-1.5">Course Code</label>
           <input
             type="text"
             value={form.code}
             onChange={(e) => setForm({ ...form, code: e.target.value })}
             placeholder="e.g. CS401"
             required
-            className="input"
+            className="w-full bg-white border border-sky-200 rounded-xl px-3.5 py-2 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-sky-400/50"
           />
         </div>
         <div>
-          <label className="label">Course Name</label>
+          <label className="block text-xs font-semibold text-sky-900 mb-1.5">Course Name</label>
           <input
             type="text"
             value={form.name}
             onChange={(e) => setForm({ ...form, name: e.target.value })}
             placeholder="e.g. Advanced Operating Systems"
             required
-            className="input"
+            className="w-full bg-white border border-sky-200 rounded-xl px-3.5 py-2 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-sky-400/50"
           />
         </div>
         <div>
-          <label className="label">Department</label>
+          <label className="block text-xs font-semibold text-sky-900 mb-1.5">Department</label>
           <select
             value={form.department}
             onChange={(e) => setForm({ ...form, department: e.target.value })}
-            className="input"
+            className="w-full bg-white border border-sky-200 rounded-xl px-3.5 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-sky-400/50 cursor-pointer"
           >
             <option value="Computer Science">Computer Science</option>
-            <option value="Electronics &amp; Comm">Electronics &amp; Comm</option>
+            <option value="Electronics & Comm">Electronics & Comm</option>
             <option value="Mathematics">Mathematics</option>
             <option value="Mechanical Eng">Mechanical Eng</option>
           </select>
         </div>
         <div>
-          <label className="label">Faculty Lead</label>
+          <label className="block text-xs font-semibold text-sky-900 mb-1.5">Faculty Lead</label>
           <select
             value={form.facultyId}
             onChange={(e) => setForm({ ...form, facultyId: e.target.value })}
-            className="input"
+            className="w-full bg-white border border-sky-200 rounded-xl px-3.5 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-sky-400/50 cursor-pointer"
             required
           >
             <option value="">Select faculty...</option>
@@ -273,15 +273,15 @@ function CreateCourseModal({ isOpen, onClose, facultyList, onCreate }) {
             ))}
           </select>
         </div>
-        <div className="flex justify-end gap-3 pt-4 border-t border-slate-800">
+        <div className="flex justify-end gap-3 pt-4 border-t border-sky-100">
           <button
             type="button"
             onClick={onClose}
-            className="px-4 py-2 rounded-xl border border-slate-800 text-xs font-semibold text-slate-400 hover:text-white transition"
+            className="px-4 py-2 rounded-xl border border-sky-200 text-xs font-semibold text-slate-600 hover:bg-slate-50 transition"
           >
             Cancel
           </button>
-          <button type="submit" className="btn-primary px-5">
+          <button type="submit" className="btn-primary px-5 py-2 text-xs">
             Save Course
           </button>
         </div>
@@ -306,11 +306,11 @@ function EnrollStudentModal({ isOpen, onClose, course, students, onEnroll }) {
     <Modal isOpen={isOpen} onClose={onClose} title={`Enroll Student into ${course.code}`}>
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
-          <label className="label">Select Student</label>
+          <label className="block text-xs font-semibold text-sky-900 mb-1.5">Select Student</label>
           <select
             value={studentId}
             onChange={(e) => setStudentId(e.target.value)}
-            className="input"
+            className="w-full bg-white border border-sky-200 rounded-xl px-3.5 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-sky-400/50 cursor-pointer"
             required
           >
             <option value="">Choose a student...</option>
@@ -321,18 +321,18 @@ function EnrollStudentModal({ isOpen, onClose, course, students, onEnroll }) {
             ))}
           </select>
         </div>
-        <div className="flex justify-end gap-3 pt-4 border-t border-slate-800">
+        <div className="flex justify-end gap-3 pt-4 border-t border-sky-100">
           <button
             type="button"
             onClick={onClose}
-            className="px-4 py-2 rounded-xl border border-slate-800 text-xs font-semibold text-slate-400 hover:text-white transition"
+            className="px-4 py-2 rounded-xl border border-sky-200 text-xs font-semibold text-slate-600 hover:bg-slate-50 transition"
           >
             Cancel
           </button>
           <button
             type="submit"
             disabled={!studentId}
-            className="btn-primary px-5 disabled:opacity-40"
+            className="btn-primary px-5 py-2 text-xs disabled:opacity-40"
           >
             Enroll
           </button>
@@ -347,17 +347,17 @@ function ConfirmDialog({ isOpen, title, message, confirmLabel, variant = "danger
 
   return (
     <Modal isOpen={isOpen} onClose={onCancel} title={title} maxWidth="max-w-md">
-      <div className="p-4 bg-slate-950/60 border border-slate-800/80 rounded-xl text-sm text-slate-400 space-y-2">
+      <div className="p-4 bg-rose-50 border border-rose-200 rounded-2xl text-sm text-rose-800 space-y-2">
         <p>{message}</p>
       </div>
       <div className="flex justify-end gap-3 mt-4">
         <button
           onClick={onCancel}
-          className="px-4 py-2 rounded-xl border border-slate-800 text-xs font-semibold text-slate-400 hover:text-white transition"
+          className="px-4 py-2 rounded-xl border border-sky-200 text-xs font-semibold text-slate-600 hover:bg-slate-50 transition"
         >
           Cancel
         </button>
-        <button onClick={onConfirm} className="btn-danger px-5">
+        <button onClick={onConfirm} className="btn-danger px-5 py-2 text-xs">
           {confirmLabel}
         </button>
       </div>

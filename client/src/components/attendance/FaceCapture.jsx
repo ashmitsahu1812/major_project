@@ -217,16 +217,16 @@ export default function FaceCapture({ sessionId, onVerified }) {
   };
 
   return (
-    <div className="bg-slate-900 border border-slate-800 rounded-3xl p-6 shadow-2xl max-w-lg mx-auto space-y-6">
+    <div className="bg-white border border-sky-100 rounded-3xl p-6 shadow-xl max-w-lg mx-auto space-y-6">
       {/* Header & Mode Switcher */}
       <div className="text-center space-y-2">
-        <div className="flex items-center justify-center p-1 bg-slate-950 rounded-xl max-w-xs mx-auto border border-slate-800">
+        <div className="flex items-center justify-center p-1 bg-sky-50 rounded-xl max-w-xs mx-auto border border-sky-200">
           <button
             onClick={() => setActiveTab('camera')}
             className={`flex-1 py-1.5 px-3 rounded-lg text-xs font-bold transition flex items-center justify-center gap-1.5 ${
               activeTab === 'camera'
-                ? 'bg-brand-600 text-white shadow-md'
-                : 'text-slate-400 hover:text-white'
+                ? 'bg-sky-500 text-white shadow-sm'
+                : 'text-sky-700 hover:text-sky-950'
             }`}
           >
             <Camera className="w-3.5 h-3.5" />
@@ -236,8 +236,8 @@ export default function FaceCapture({ sessionId, onVerified }) {
             onClick={() => setActiveTab('hardware')}
             className={`flex-1 py-1.5 px-3 rounded-lg text-xs font-bold transition flex items-center justify-center gap-1.5 ${
               activeTab === 'hardware'
-                ? 'bg-brand-600 text-white shadow-md'
-                : 'text-slate-400 hover:text-white'
+                ? 'bg-sky-500 text-white shadow-sm'
+                : 'text-sky-700 hover:text-sky-950'
             }`}
           >
             <Fingerprint className="w-3.5 h-3.5" />
@@ -245,10 +245,10 @@ export default function FaceCapture({ sessionId, onVerified }) {
           </button>
         </div>
 
-        <h3 className="text-lg font-bold text-white">
+        <h3 className="text-lg font-bold text-sky-950">
           {activeTab === 'camera' ? 'Live Optical Liveness Check' : 'FIDO2 Hardware Biometrics'}
         </h3>
-        <p className="text-xs text-slate-400 max-w-sm mx-auto">
+        <p className="text-xs text-sky-600 font-medium max-w-sm mx-auto">
           {activeTab === 'camera'
             ? 'Real-time anti-spoofing challenge: detects live optical eye & micro-motion to reject static photos.'
             : 'Cryptographic biometric authentication directly through your device sensor.'}
@@ -258,7 +258,7 @@ export default function FaceCapture({ sessionId, onVerified }) {
       {activeTab === 'camera' ? (
         <>
           {/* Video & Canvas Overlay Viewport */}
-          <div className="relative aspect-video rounded-2xl overflow-hidden bg-slate-950 border-2 border-slate-800 flex items-center justify-center">
+          <div className="relative aspect-video rounded-2xl overflow-hidden bg-slate-950 border-2 border-sky-200 flex items-center justify-center shadow-inner">
             <video
               ref={videoRef}
               autoPlay
@@ -275,17 +275,17 @@ export default function FaceCapture({ sessionId, onVerified }) {
             />
 
             {/* Futuristic Liveness Guide Overlay */}
-            <div className="absolute inset-0 border-2 border-dashed border-indigo-500/30 rounded-2xl pointer-events-none flex items-center justify-center">
+            <div className="absolute inset-0 border-2 border-dashed border-sky-400/40 rounded-2xl pointer-events-none flex items-center justify-center">
               <div
                 className={`w-48 h-56 rounded-3xl border-2 flex flex-col items-center justify-between p-3 transition-colors ${
                   livenessPhase === 'action_challenge'
-                    ? 'border-amber-400 bg-amber-400/5 animate-pulse'
+                    ? 'border-amber-400 bg-amber-400/10 animate-pulse'
                     : livenessPhase === 'verified'
-                    ? 'border-emerald-400 bg-emerald-400/10'
-                    : 'border-indigo-500/50'
+                    ? 'border-emerald-400 bg-emerald-400/15'
+                    : 'border-sky-400/60'
                 }`}
               >
-                <div className="text-[10px] font-mono uppercase font-bold text-indigo-300">
+                <div className="text-[10px] font-mono uppercase font-bold text-sky-300">
                   {livenessPhase === 'action_challenge'
                     ? 'ACTION: BLINK OR MOVE'
                     : livenessPhase === 'verified'
@@ -296,20 +296,20 @@ export default function FaceCapture({ sessionId, onVerified }) {
                   className={`w-8 h-8 ${
                     livenessPhase === 'action_challenge'
                       ? 'text-amber-400 animate-spin'
-                      : 'text-indigo-400/60'
+                      : 'text-sky-300'
                   }`}
                 />
-                <div className="text-[10px] font-mono text-slate-400">
+                <div className="text-[10px] font-mono text-sky-200 font-bold">
                   {motionDelta > 0 ? `Delta: ${motionDelta}` : 'Optical Grid Active'}
                 </div>
               </div>
             </div>
 
             {!streamActive && (
-              <div className="absolute inset-0 bg-slate-900/90 flex flex-col items-center justify-center p-4 text-center">
-                <Camera className="w-10 h-10 text-slate-600 mb-2" />
-                <p className="text-xs text-slate-300 font-semibold">Camera Access Required</p>
-                <p className="text-[11px] text-slate-500 mt-1">
+              <div className="absolute inset-0 bg-white/95 flex flex-col items-center justify-center p-4 text-center">
+                <Camera className="w-10 h-10 text-sky-400 mb-2" />
+                <p className="text-xs text-sky-950 font-bold">Camera Access Required</p>
+                <p className="text-[11px] text-sky-600 mt-1 font-medium">
                   Enable browser camera permissions to begin liveness verification.
                 </p>
               </div>
@@ -336,14 +336,14 @@ export default function FaceCapture({ sessionId, onVerified }) {
         </>
       ) : (
         /* Hardware Biometric View (Touch ID / Face ID) */
-        <div className="p-8 rounded-2xl bg-slate-950/80 border border-slate-800 text-center space-y-6">
-          <div className="w-20 h-20 rounded-full bg-indigo-500/10 border-2 border-indigo-500/30 flex items-center justify-center mx-auto text-indigo-400">
+        <div className="p-8 rounded-2xl bg-sky-50/50 border border-sky-100 text-center space-y-6">
+          <div className="w-20 h-20 rounded-full bg-white border-2 border-sky-200 flex items-center justify-center mx-auto text-sky-500 shadow-sm">
             <Fingerprint className="w-10 h-10 animate-pulse" />
           </div>
 
           <div className="space-y-1.5">
-            <h4 className="text-sm font-bold text-white">Touch ID / Face ID Sensor</h4>
-            <p className="text-xs text-slate-400 max-w-xs mx-auto leading-relaxed">
+            <h4 className="text-sm font-bold text-sky-950">Touch ID / Face ID Sensor</h4>
+            <p className="text-xs text-sky-600 max-w-xs mx-auto leading-relaxed font-medium">
               Authenticate cryptographically using your device's built-in biometric hardware.
             </p>
           </div>

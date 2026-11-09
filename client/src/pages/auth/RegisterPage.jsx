@@ -42,8 +42,8 @@ export default function RegisterPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h3 className="text-xl font-bold text-white tracking-tight">Create an account</h3>
-        <p className="text-xs text-slate-400 mt-1">
+        <h3 className="text-xl font-bold text-sky-950 tracking-tight">Create an account</h3>
+        <p className="text-xs text-sky-600/80 mt-1">
           Join the EduPulse digital campus attendance network.
         </p>
       </div>
@@ -51,7 +51,7 @@ export default function RegisterPage() {
       <form onSubmit={handleSubmit} className="space-y-4">
         {/* Role selector */}
         <div>
-          <label className="block text-xs font-medium text-slate-300 mb-1.5">
+          <label className="block text-xs font-semibold text-sky-900 mb-1.5">
             Account role
           </label>
           <div className="grid grid-cols-2 gap-2.5">
@@ -60,10 +60,10 @@ export default function RegisterPage() {
                 key={r}
                 type="button"
                 onClick={() => setFormData({ ...formData, role: r })}
-                className={`py-2.5 px-3 rounded-xl border text-xs font-semibold capitalize transition-all duration-200 ${
+                className={`py-2.5 px-3 rounded-xl border text-xs font-bold capitalize transition-all duration-200 ${
                   formData.role === r
-                    ? "bg-brand-500/15 text-brand-400 border-brand-500/40 shadow-sm"
-                    : "bg-slate-950/60 text-slate-500 border-slate-800 hover:text-slate-300 hover:border-slate-700"
+                    ? "bg-sky-50 text-sky-700 border-sky-300 shadow-sm"
+                    : "bg-white text-slate-500 border-sky-100 hover:text-sky-700 hover:border-sky-200"
                 }`}
               >
                 {r}
@@ -73,11 +73,11 @@ export default function RegisterPage() {
         </div>
 
         <div>
-          <label className="block text-xs font-medium text-slate-300 mb-1.5">
+          <label className="block text-xs font-semibold text-sky-900 mb-1.5">
             Full name
           </label>
           <div className="relative">
-            <User className="w-4 h-4 text-slate-500 absolute left-3.5 top-1/2 -translate-y-1/2" />
+            <User className="w-4 h-4 text-sky-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
             <input
               type="text"
               value={formData.name}
@@ -85,17 +85,17 @@ export default function RegisterPage() {
               placeholder="e.g. Aarav Sharma"
               required
               autoComplete="name"
-              className="w-full pl-10 pr-4 py-2.5 bg-slate-950/80 border border-slate-800/80 rounded-xl text-sm text-slate-200 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500/60 transition"
+              className="w-full pl-10 pr-4 py-2.5 bg-white border border-sky-200 rounded-xl text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-sky-400/40 focus:border-sky-400 transition"
             />
           </div>
         </div>
 
         <div>
-          <label className="block text-xs font-medium text-slate-300 mb-1.5">
+          <label className="block text-xs font-semibold text-sky-900 mb-1.5">
             Institutional email
           </label>
           <div className="relative">
-            <Mail className="w-4 h-4 text-slate-500 absolute left-3.5 top-1/2 -translate-y-1/2" />
+            <Mail className="w-4 h-4 text-sky-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
             <input
               type="email"
               value={formData.email}
@@ -103,17 +103,17 @@ export default function RegisterPage() {
               placeholder="name@edupulse.com"
               required
               autoComplete="email"
-              className="w-full pl-10 pr-4 py-2.5 bg-slate-950/80 border border-slate-800/80 rounded-xl text-sm text-slate-200 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500/60 transition"
+              className="w-full pl-10 pr-4 py-2.5 bg-white border border-sky-200 rounded-xl text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-sky-400/40 focus:border-sky-400 transition"
             />
           </div>
         </div>
 
         <div>
-          <label className="block text-xs font-medium text-slate-300 mb-1.5">
+          <label className="block text-xs font-semibold text-sky-900 mb-1.5">
             Password
           </label>
           <div className="relative">
-            <Lock className="w-4 h-4 text-slate-500 absolute left-3.5 top-1/2 -translate-y-1/2" />
+            <Lock className="w-4 h-4 text-sky-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
             <input
               type="password"
               value={formData.password}
@@ -122,29 +122,29 @@ export default function RegisterPage() {
               minLength={8}
               required
               autoComplete="new-password"
-              className="w-full pl-10 pr-4 py-2.5 bg-slate-950/80 border border-slate-800/80 rounded-xl text-sm text-slate-200 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500/60 transition"
+              className="w-full pl-10 pr-4 py-2.5 bg-white border border-sky-200 rounded-xl text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-sky-400/40 focus:border-sky-400 transition"
             />
           </div>
         </div>
 
         <div>
-          <label className="block text-xs font-medium text-slate-300 mb-1.5">
+          <label className="block text-xs font-semibold text-sky-900 mb-1.5">
             Department
           </label>
           <div className="relative">
-            <Building2 className="w-4 h-4 text-slate-500 absolute left-3.5 top-1/2 -translate-y-1/2" />
+            <Building2 className="w-4 h-4 text-sky-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
             <select
               value={formData.department}
               onChange={(e) => setFormData({ ...formData, department: e.target.value })}
-              className="w-full pl-10 pr-4 py-2.5 bg-slate-950/80 border border-slate-800/80 rounded-xl text-sm text-slate-200 focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500/60 appearance-none cursor-pointer transition"
+              className="w-full pl-10 pr-4 py-2.5 bg-white border border-sky-200 rounded-xl text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-sky-400/40 focus:border-sky-400 appearance-none cursor-pointer transition"
             >
               <option value="Computer Science">Computer Science</option>
-              <option value="Electronics &amp; Comm">Electronics &amp; Comm</option>
+              <option value="Electronics & Comm">Electronics & Comm</option>
               <option value="Mathematics">Mathematics</option>
               <option value="Mechanical Eng">Mechanical Eng</option>
             </select>
             <svg
-              className="w-4 h-4 text-slate-500 absolute right-3.5 top-1/2 -translate-y-1/2 pointer-events-none"
+              className="w-4 h-4 text-sky-400 absolute right-3.5 top-1/2 -translate-y-1/2 pointer-events-none"
               viewBox="0 0 20 20"
               fill="currentColor"
             >
@@ -159,11 +159,11 @@ export default function RegisterPage() {
 
         {formData.role === "STUDENT" && (
           <div>
-            <label className="block text-xs font-medium text-slate-300 mb-1.5">
+            <label className="block text-xs font-semibold text-sky-900 mb-1.5">
               Roll number
             </label>
             <div className="relative">
-              <Hash className="w-4 h-4 text-slate-500 absolute left-3.5 top-1/2 -translate-y-1/2" />
+              <Hash className="w-4 h-4 text-sky-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
               <input
                 type="text"
                 value={formData.rollNumber}
@@ -171,7 +171,7 @@ export default function RegisterPage() {
                 placeholder="e.g. 2024CS99"
                 required
                 autoComplete="off"
-                className="w-full pl-10 pr-4 py-2.5 bg-slate-950/80 border border-slate-800/80 rounded-xl text-sm text-slate-200 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500/60 transition"
+                className="w-full pl-10 pr-4 py-2.5 bg-white border border-sky-200 rounded-xl text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-sky-400/40 focus:border-sky-400 transition"
               />
             </div>
           </div>
@@ -180,7 +180,7 @@ export default function RegisterPage() {
         <button
           type="submit"
           disabled={loading}
-          className="btn-primary w-full justify-center"
+          className="btn-primary w-full justify-center py-2.5"
         >
           {loading ? (
             <>
@@ -216,7 +216,7 @@ export default function RegisterPage() {
 
       <p className="text-center text-xs text-slate-500 mt-4">
         Already have an account?{" "}
-        <Link to="/login" className="text-brand-400 font-semibold hover:underline">
+        <Link to="/login" className="text-sky-600 font-bold hover:underline">
           Sign in
         </Link>
       </p>

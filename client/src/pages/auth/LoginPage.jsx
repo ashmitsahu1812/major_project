@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import {
   Mail,
@@ -12,27 +12,25 @@ import toast from "react-hot-toast";
 import { useAuth } from "../../hooks/useAuth";
 
 export default function LoginPage() {
-  const navigate = useNavigate();
-  const { login } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const { login } = useAuth();
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!email || !password) {
-      toast.error("Please enter both email and password");
-      return;
-    }
-
     setLoading(true);
+
     try {
       const user = await login(email, password);
+      toast.success(`Welcome back, ${user.name}!`);
+
       if (user.role === "ADMIN") navigate("/admin");
       else if (user.role === "FACULTY") navigate("/faculty");
       else navigate("/student");
     } catch (err) {
-      toast.error(err.response?.data?.message || "Login failed. Check your credentials.");
+      toast.error(err.response?.data?.message || "Invalid credentials provided");
     } finally {
       setLoading(false);
     }
@@ -47,22 +45,22 @@ export default function LoginPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h3 className="text-xl font-bold text-white tracking-tight">Welcome back</h3>
-        <p className="text-xs text-slate-400 mt-1">
-          Sign in to access your real-time attendance dashboard.
+        <h3 className="text-xl font-bold text-sky-950 tracking-tight">Welcome back</h3>
+        <p className="text-xs text-sky-600 mt-1 font-medium">
+          Sign in to access your digital attendance dashboard.
         </p>
       </div>
 
       {/* Demo credentials */}
-      <div className="p-3.5 bg-slate-950/60 border border-slate-800/80 rounded-xl space-y-2.5">
-        <span className="text-[11px] font-semibold uppercase tracking-widest text-slate-500 block">
+      <div className="p-3.5 bg-sky-50/60 border border-sky-100 rounded-2xl space-y-2.5">
+        <span className="text-[11px] font-bold uppercase tracking-widest text-sky-600 block">
           Quick fill — demo credentials:
         </span>
         <div className="grid grid-cols-3 gap-2">
           <button
             type="button"
             onClick={() => setDemoCredentials("admin@edupulse.com", "admin123")}
-            className="flex items-center justify-center gap-1.5 py-1.5 px-2 rounded-lg bg-rose-500/10 border border-rose-500/20 text-rose-400 text-xs font-semibold hover:bg-rose-500/20 transition-colors"
+            className="flex items-center justify-center gap-1.5 py-1.5 px-2 rounded-xl bg-white border border-rose-200 text-rose-600 text-xs font-bold hover:bg-rose-50 shadow-sm transition-colors"
           >
             <ShieldCheck className="w-3.5 h-3.5" />
             Admin
@@ -70,7 +68,7 @@ export default function LoginPage() {
           <button
             type="button"
             onClick={() => setDemoCredentials("faculty1@edupulse.com", "faculty123")}
-            className="flex items-center justify-center gap-1.5 py-1.5 px-2 rounded-lg bg-amber-500/10 border border-amber-500/20 text-amber-400 text-xs font-semibold hover:bg-amber-500/20 transition-colors"
+            className="flex items-center justify-center gap-1.5 py-1.5 px-2 rounded-xl bg-white border border-amber-200 text-amber-600 text-xs font-bold hover:bg-amber-50 shadow-sm transition-colors"
           >
             <UserCheck className="w-3.5 h-3.5" />
             Faculty
@@ -78,7 +76,7 @@ export default function LoginPage() {
           <button
             type="button"
             onClick={() => setDemoCredentials("student1@edupulse.com", "student123")}
-            className="flex items-center justify-center gap-1.5 py-1.5 px-2 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-semibold hover:bg-emerald-500/20 transition-colors"
+            className="flex items-center justify-center gap-1.5 py-1.5 px-2 rounded-xl bg-white border border-sky-200 text-sky-600 text-xs font-bold hover:bg-sky-50 shadow-sm transition-colors"
           >
             <GraduationCap className="w-3.5 h-3.5" />
             Student
@@ -88,11 +86,11 @@ export default function LoginPage() {
 
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
-          <label className="block text-xs font-medium text-slate-300 mb-1.5">
-            Email address
+          <label className="block text-xs font-bold text-sky-900 mb-1.5">
+            Institutional Email
           </label>
           <div className="relative">
-            <Mail className="w-4 h-4 text-slate-500 absolute left-3.5 top-1/2 -translate-y-1/2" />
+            <Mail className="w-4 h-4 text-sky-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
             <input
               type="email"
               value={email}
@@ -100,23 +98,23 @@ export default function LoginPage() {
               placeholder="name@edupulse.com"
               required
               autoComplete="email"
-              className="w-full pl-10 pr-4 py-2.5 bg-slate-950/80 border border-slate-800/80 rounded-xl text-sm text-slate-200 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500/60 transition"
+              className="w-full pl-10 pr-4 py-2.5 bg-white border border-sky-200 rounded-xl text-sm text-slate-800 placeholder-sky-300 focus:outline-none focus:ring-2 focus:ring-sky-400/20 focus:border-sky-500 shadow-sm transition"
             />
           </div>
         </div>
 
         <div>
           <div className="flex items-center justify-between mb-1.5">
-            <label className="block text-xs font-medium text-slate-300">Password</label>
+            <label className="block text-xs font-bold text-sky-900">Password</label>
             <Link
               to="/forgot-password"
-              className="text-xs text-brand-400 hover:underline"
+              className="text-xs text-sky-500 hover:text-sky-700 font-semibold"
             >
               Forgot?
             </Link>
           </div>
           <div className="relative">
-            <Lock className="w-4 h-4 text-slate-500 absolute left-3.5 top-1/2 -translate-y-1/2" />
+            <Lock className="w-4 h-4 text-sky-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
             <input
               type="password"
               value={password}
@@ -124,7 +122,7 @@ export default function LoginPage() {
               placeholder="Password"
               required
               autoComplete="current-password"
-              className="w-full pl-10 pr-4 py-2.5 bg-slate-950/80 border border-slate-800/80 rounded-xl text-sm text-slate-200 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500/60 transition"
+              className="w-full pl-10 pr-4 py-2.5 bg-white border border-sky-200 rounded-xl text-sm text-slate-800 placeholder-sky-300 focus:outline-none focus:ring-2 focus:ring-sky-400/20 focus:border-sky-500 shadow-sm transition"
             />
           </div>
         </div>
@@ -132,12 +130,12 @@ export default function LoginPage() {
         <button
           type="submit"
           disabled={loading}
-          className="btn-primary w-full justify-center"
+          className="btn-primary w-full justify-center py-2.5"
         >
           {loading ? (
             <>
               <svg
-                className="w-4 h-4 animate-spin"
+                className="w-4 h-4 animate-spin mr-2"
                 viewBox="0 0 24 24"
                 fill="none"
               >
@@ -155,21 +153,24 @@ export default function LoginPage() {
                   fill="currentColor"
                 />
               </svg>
-              Signing in...
+              Authenticating...
             </>
           ) : (
             <>
-              Sign In
-              <ArrowRight className="w-4 h-4" />
+              Sign In to EduPulse
+              <ArrowRight className="w-4 h-4 ml-1" />
             </>
           )}
         </button>
       </form>
 
-      <p className="text-center text-xs text-slate-500 mt-4">
+      <p className="text-center text-xs text-sky-600 font-medium mt-4">
         New to EduPulse?{" "}
-        <Link to="/register" className="text-brand-400 font-semibold hover:underline">
-          Create an account
+        <Link
+          to="/register"
+          className="text-sky-500 hover:text-sky-700 font-bold ml-1 hover:underline"
+        >
+          Create student account
         </Link>
       </p>
     </div>

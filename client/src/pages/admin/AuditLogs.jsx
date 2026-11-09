@@ -30,7 +30,7 @@ export default function AuditLogs() {
       header: 'Timestamp',
       key: 'timestamp',
       render: (row) => (
-        <span className="text-xs text-slate-400">{formatDateTime(row.timestamp)}</span>
+        <span className="text-xs text-slate-600 font-medium">{formatDateTime(row.timestamp)}</span>
       ),
     },
     {
@@ -39,7 +39,7 @@ export default function AuditLogs() {
       render: (row) => (
         <Badge
           variant={
-            row.action.includes('ADMIN') ? 'indigo' : row.action === 'MANUAL' ? 'amber' : 'slate'
+            row.action.includes('ADMIN') ? 'sky' : row.action === 'MANUAL' ? 'amber' : 'slate'
           }
           size="sm"
         >
@@ -52,8 +52,8 @@ export default function AuditLogs() {
       key: 'studentName',
       render: (row) => (
         <div>
-          <p className="font-semibold text-white text-sm">{row.studentName}</p>
-          <p className="text-xs text-slate-400">Roll: {row.studentRoll}</p>
+          <p className="font-bold text-sky-950 text-sm">{row.studentName}</p>
+          <p className="text-xs text-slate-500 font-medium">Roll: {row.studentRoll}</p>
         </div>
       ),
     },
@@ -62,8 +62,10 @@ export default function AuditLogs() {
       key: 'courseCode',
       render: (row) => (
         <div>
-          <p className="font-semibold text-slate-200 text-xs">{row.courseCode}</p>
-          <p className="text-xs text-slate-400">{row.courseName}</p>
+          <span className="font-bold text-sky-700 text-xs px-2 py-0.5 rounded bg-sky-50 border border-sky-200">
+            {row.courseCode}
+          </span>
+          <p className="text-xs text-slate-500 mt-1 line-clamp-1">{row.courseName}</p>
         </div>
       ),
     },
@@ -80,7 +82,9 @@ export default function AuditLogs() {
       header: 'Performed By',
       key: 'performedBy',
       render: (row) => (
-        <span className="text-xs font-medium text-slate-300">{row.performedBy}</span>
+        <span className="text-xs font-semibold text-sky-800 bg-sky-50/60 px-2 py-1 rounded-lg border border-sky-100">
+          {row.performedBy}
+        </span>
       ),
     },
   ];
@@ -88,11 +92,11 @@ export default function AuditLogs() {
   return (
     <div className="space-y-6 max-w-7xl mx-auto">
       <div>
-        <h2 className="text-2xl font-black text-white tracking-tight flex items-center gap-2.5">
-          <FileText className="w-7 h-7 text-indigo-400" />
-          <span>System Audit & Override Logs</span>
+        <h2 className="text-2xl font-black text-sky-950 tracking-tight flex items-center gap-2.5">
+          <FileText className="w-7 h-7 text-sky-500" />
+          <span>System Audit &amp; Override Logs</span>
         </h2>
-        <p className="text-xs text-slate-400 mt-1">
+        <p className="text-xs text-sky-700/80 mt-1">
           Cryptographically recorded ledger of faculty manual overrides, medical leaves, and admin interventions.
         </p>
       </div>
@@ -110,4 +114,3 @@ export default function AuditLogs() {
     </div>
   );
 }
-

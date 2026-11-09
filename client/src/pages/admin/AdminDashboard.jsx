@@ -50,16 +50,16 @@ export default function AdminDashboard() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h2 className="text-2xl font-black text-white tracking-tight">
+          <h2 className="text-2xl font-black text-sky-950 tracking-tight">
             Institutional Overview
           </h2>
-          <p className="text-sm text-slate-400 mt-1.5">
+          <p className="text-sm text-sky-600/90 mt-1.5 font-medium">
             Real-time biometric &amp; cryptographic attendance analytics across all faculties.
           </p>
         </div>
-        <div className="flex items-center gap-2.5 px-4 py-2.5 rounded-xl bg-emerald-500/10 border border-emerald-500/30">
-          <Activity className="w-4 h-4 text-emerald-400" />
-          <span className="text-xs font-semibold text-emerald-400">
+        <div className="flex items-center gap-2.5 px-4 py-2.5 rounded-xl bg-emerald-50 border border-emerald-200">
+          <Activity className="w-4 h-4 text-emerald-600" />
+          <span className="text-xs font-bold text-emerald-700">
             Anti-Proxy Guard Active
           </span>
         </div>
@@ -100,31 +100,31 @@ export default function AdminDashboard() {
       {/* Charts */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2 card-hover">
-          <div className="p-5 border-b border-slate-800/60">
-            <h4 className="text-base font-bold text-white flex items-center gap-2">
-              <TrendingUp className="w-4 h-4 text-brand-400" />
+          <div className="p-5 border-b border-sky-100">
+            <h4 className="text-base font-bold text-sky-950 flex items-center gap-2">
+              <TrendingUp className="w-4 h-4 text-sky-500" />
               14-Day Attendance &amp; Proxy Trends
             </h4>
-            <p className="text-xs text-slate-400 mt-1">
+            <p className="text-xs text-sky-600/90 font-medium mt-1">
               Daily turnout volume correlated with anti-proxy violation events.
             </p>
           </div>
-          <div className="h-72">
+          <div className="h-72 p-2">
             <AttendanceTrendChart data={trendData || []} />
           </div>
         </div>
 
         <div className="card-hover">
-          <div className="p-5 border-b border-slate-800/60">
-            <h4 className="text-base font-bold text-white flex items-center gap-2">
-              <AlertTriangle className="w-4 h-4 text-amber-400" />
+          <div className="p-5 border-b border-sky-100">
+            <h4 className="text-base font-bold text-sky-950 flex items-center gap-2">
+              <AlertTriangle className="w-4 h-4 text-amber-500" />
               Campus Risk Breakdown
             </h4>
-            <p className="text-xs text-slate-400 mt-1">
+            <p className="text-xs text-sky-600/90 font-medium mt-1">
               Students segmented by 75% threshold margin.
             </p>
           </div>
-          <div className="h-72">
+          <div className="h-72 p-2">
             <AttendanceDonutChart data={riskBreakdown || []} />
           </div>
         </div>
@@ -132,29 +132,29 @@ export default function AdminDashboard() {
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <div className="card-hover">
-          <div className="p-5 border-b border-slate-800/60">
-            <h4 className="text-base font-bold text-white flex items-center gap-2">
-              <Layers className="w-4 h-4 text-info-400" />
+          <div className="p-5 border-b border-sky-100">
+            <h4 className="text-base font-bold text-sky-950 flex items-center gap-2">
+              <Layers className="w-4 h-4 text-sky-500" />
               Department Turnout Comparison
             </h4>
-            <p className="text-xs text-slate-400 mt-1">
+            <p className="text-xs text-sky-600/90 font-medium mt-1">
               Mean attendance percentages by academic division.
             </p>
           </div>
-          <div className="h-72">
+          <div className="h-72 p-2">
             <DepartmentComparisonChart data={deptComparison || []} />
           </div>
         </div>
 
         <div className="card-hover flex flex-col overflow-hidden">
-          <div className="p-5 border-b border-slate-800/60 flex items-center justify-between">
-            <h4 className="text-base font-bold text-white flex items-center gap-2">
-              <ShieldAlert className="w-4 h-4 text-rose-400" />
+          <div className="p-5 border-b border-sky-100 flex items-center justify-between">
+            <h4 className="text-base font-bold text-sky-950 flex items-center gap-2">
+              <ShieldAlert className="w-4 h-4 text-rose-500" />
               Live Threat Feed
             </h4>
             <Link
               to="/admin/proxy-alerts"
-              className="text-xs font-semibold text-brand-400 hover:underline"
+              className="text-xs font-bold text-sky-600 hover:text-sky-800 hover:underline"
             >
               View all
             </Link>
@@ -164,16 +164,16 @@ export default function AdminDashboard() {
               recentAlerts.map((alert) => (
                 <div
                   key={alert.id}
-                  className="p-3.5 rounded-xl bg-slate-950/50 border border-slate-800/60 hover:border-slate-700 transition-colors"
+                  className="p-3.5 rounded-xl bg-sky-50/50 border border-sky-100 hover:border-sky-200 transition-colors"
                 >
                   <div className="flex items-start justify-between gap-3">
                     <div>
                       <div className="flex items-center gap-2">
-                        <span className="text-sm font-bold text-white">{alert.student.name}</span>
-                        <span className="text-xs text-slate-500">({alert.student.rollNumber || "N/A"})</span>
+                        <span className="text-sm font-bold text-sky-950">{alert.student.name}</span>
+                        <span className="text-xs text-sky-600 font-medium">({alert.student.rollNumber || "N/A"})</span>
                       </div>
-                      <p className="text-xs text-rose-300/90 mt-1 line-clamp-1">{alert.reason}</p>
-                      <span className="text-[11px] text-slate-500 mt-1 block">
+                      <p className="text-xs text-rose-600 font-semibold mt-1 line-clamp-1">{alert.reason}</p>
+                      <span className="text-[11px] text-sky-500/80 mt-1 block font-medium">
                         {formatDateTime(alert.flaggedAt)} • {alert.session.course.code}
                       </span>
                     </div>
@@ -185,7 +185,7 @@ export default function AdminDashboard() {
               ))
             ) : (
               <div className="py-12 text-center">
-                <p className="text-sm text-slate-500">No recent security flags recorded.</p>
+                <p className="text-sm text-sky-400 font-medium">No recent security flags recorded.</p>
               </div>
             )}
           </div>

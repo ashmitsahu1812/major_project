@@ -219,7 +219,7 @@ export default function LiveAttendance() {
   return (
     <div className="space-y-8 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       {/* Session Header */}
-      <div className="card-hover flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-6 rounded-2xl border border-slate-800/60">
+      <div className="card-hover flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-6 rounded-2xl border border-sky-100 bg-white">
         <div>
           <div className="flex flex-wrap items-center gap-2.5">
             <Badge variant="brand" size="sm">
@@ -228,13 +228,13 @@ export default function LiveAttendance() {
             <Badge variant="slate" size="sm">
               {session.sessionType}
             </Badge>
-            <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-emerald-400">
-              <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
-              Live
+            <span className="inline-flex items-center gap-1.5 text-xs font-bold text-sky-600">
+              <span className="w-2 h-2 rounded-full bg-sky-500 animate-ping" />
+              Live Broadcasting
             </span>
           </div>
-          <h2 className="text-xl font-black text-white mt-2.5">{session.course.name}</h2>
-          <p className="text-xs text-slate-400 mt-1">
+          <h2 className="text-xl font-black text-sky-950 mt-2.5">{session.course.name}</h2>
+          <p className="text-xs text-sky-600/90 font-medium mt-1">
             {session.latitude != null
               ? `Geofence: ${session.radiusMeters}m classroom radius`
               : "Remote check-in enabled (no geofence)"}
@@ -246,14 +246,14 @@ export default function LiveAttendance() {
         <div className="flex items-center gap-2.5 self-start sm:self-auto">
           <button
             onClick={() => setOverrideModalOpen(true)}
-            className="btn-secondary flex items-center gap-2"
+            className="btn-secondary flex items-center gap-2 text-xs font-bold"
           >
             <Edit3 className="w-4 h-4" />
             <span>Manual Override</span>
           </button>
           <button
             onClick={handleEndSession}
-            className="btn-danger flex items-center gap-2"
+            className="btn-danger flex items-center gap-2 text-xs"
           >
             <StopCircle className="w-4 h-4" />
             <span>End Class</span>
@@ -264,52 +264,52 @@ export default function LiveAttendance() {
       {/* Metrics Grid */}
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
         <div className="card p-4">
-          <p className="text-xs text-slate-400 font-semibold uppercase tracking-wider">
+          <p className="text-xs text-sky-600 font-bold uppercase tracking-wider">
             Turnout Rate
           </p>
-          <h4 className="text-xl font-black text-white mt-1">{stats?.attendanceRate || 0}%</h4>
+          <h4 className="text-xl font-black text-sky-950 mt-1">{stats?.attendanceRate || 0}%</h4>
         </div>
         <div className="card p-4">
-          <p className="text-xs text-slate-400 font-semibold uppercase tracking-wider">
+          <p className="text-xs text-emerald-600 font-bold uppercase tracking-wider">
             Present
           </p>
-          <h4 className="text-xl font-black text-success-400 mt-1">{stats?.presentCount || 0}</h4>
+          <h4 className="text-xl font-black text-emerald-600 mt-1">{stats?.presentCount || 0}</h4>
         </div>
         <div className="card p-4">
-          <p className="text-xs text-slate-400 font-semibold uppercase tracking-wider">
+          <p className="text-xs text-amber-600 font-bold uppercase tracking-wider">
             Late Arrivals
           </p>
-          <h4 className="text-xl font-black text-warning-400 mt-1">{stats?.lateCount || 0}</h4>
+          <h4 className="text-xl font-black text-amber-600 mt-1">{stats?.lateCount || 0}</h4>
         </div>
         <div className="card p-4">
-          <p className="text-xs text-slate-400 font-semibold uppercase tracking-wider">
+          <p className="text-xs text-rose-600 font-bold uppercase tracking-wider">
             Quarantined
           </p>
-          <h4 className="text-xl font-black text-danger-400 mt-1">{stats?.proxyCount || 0}</h4>
+          <h4 className="text-xl font-black text-rose-600 mt-1">{stats?.proxyCount || 0}</h4>
         </div>
         <div className="card p-4">
-          <p className="text-xs text-slate-400 font-semibold uppercase tracking-wider">
+          <p className="text-xs text-sky-700 font-bold uppercase tracking-wider">
             Enrolled
           </p>
-          <h4 className="text-xl font-black text-slate-200 mt-1">{stats?.totalEnrolled || 0}</h4>
+          <h4 className="text-xl font-black text-sky-950 mt-1">{stats?.totalEnrolled || 0}</h4>
         </div>
       </div>
 
       {/* Online / Hybrid Engagement Challenge Radar */}
-      <div className="card p-5 border border-indigo-500/30 bg-indigo-500/5">
+      <div className="card p-5 border border-sky-200 bg-sky-50/50">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div className="flex items-center gap-3.5">
-            <div className="p-3 rounded-2xl bg-indigo-500/15 border border-indigo-500/30 text-indigo-400">
+            <div className="p-3 rounded-2xl bg-white border border-sky-200 text-sky-500 shadow-sm">
               <Zap className="w-5 h-5 animate-pulse" />
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <h4 className="text-sm font-bold text-white">
+                <h4 className="text-sm font-bold text-sky-950">
                   Online &amp; Hybrid Attendance Engagement Radar
                 </h4>
                 <Badge variant="brand" size="sm">Anti-Proxy Ping</Badge>
               </div>
-              <p className="text-xs text-slate-400 mt-0.5">
+              <p className="text-xs text-sky-700/90 font-medium mt-0.5">
                 Broadcast an attention challenge to ensure remote students are actively participating at their devices.
               </p>
             </div>
@@ -317,14 +317,14 @@ export default function LiveAttendance() {
 
           <div>
             {activePing ? (
-              <div className="flex items-center gap-3 bg-slate-950 p-2.5 px-4 rounded-xl border border-indigo-500/40">
+              <div className="flex items-center gap-3 bg-white p-2.5 px-4 rounded-xl border border-sky-200 shadow-sm">
                 <div className="text-right">
-                  <div className="text-xs font-mono font-bold text-amber-400 flex items-center gap-1.5">
+                  <div className="text-xs font-mono font-bold text-amber-600 flex items-center gap-1.5">
                     <Timer className="w-3.5 h-3.5 animate-spin" />
                     <span>{pingCountdown}s remaining</span>
                   </div>
-                  <p className="text-[11px] text-slate-400">
-                    Code: <strong className="text-white font-mono text-xs">{activePing.code}</strong> • {activePing.respondedCount || 0} / {stats?.totalEnrolled || 0} Confirmed
+                  <p className="text-[11px] text-sky-700 font-medium">
+                    Code: <strong className="text-sky-950 font-mono text-xs">{activePing.code}</strong> • {activePing.respondedCount || 0} / {stats?.totalEnrolled || 0} Confirmed
                   </p>
                 </div>
               </div>
@@ -354,12 +354,12 @@ export default function LiveAttendance() {
         </div>
 
         <div className="lg:col-span-3 card flex flex-col overflow-hidden">
-          <div className="p-5 border-b border-slate-800/60 flex items-center justify-between">
-            <h4 className="text-base font-bold text-white flex items-center gap-2">
-              <Users className="w-4 h-4 text-brand-400" />
+          <div className="p-5 border-b border-sky-100 flex items-center justify-between">
+            <h4 className="text-base font-bold text-sky-950 flex items-center gap-2">
+              <Users className="w-4 h-4 text-sky-500" />
               Live Check-In Stream
             </h4>
-            <span className="text-xs text-slate-400">{records.length} verified</span>
+            <span className="text-xs text-sky-600 font-bold">{records.length} verified</span>
           </div>
 
           <div className="flex-1 overflow-y-auto max-h-[420px] p-4 space-y-2.5 scrollbar-thin">
@@ -367,23 +367,23 @@ export default function LiveAttendance() {
               records.map((rec) => (
                 <div
                   key={rec.id}
-                  className="flex items-center justify-between gap-4 p-3 rounded-xl bg-slate-950/40 border border-slate-800/60 hover:border-slate-700 transition-colors group"
+                  className="flex items-center justify-between gap-4 p-3 rounded-xl bg-sky-50/50 border border-sky-100 hover:border-sky-200 transition-colors group"
                 >
                   <div className="flex items-center gap-3 min-w-0">
                     <img
                       src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${rec.student.name}`}
                       alt="Avatar"
-                      className="w-8 h-8 rounded-full bg-slate-800 border border-slate-700 object-cover flex-shrink-0"
+                      className="w-8 h-8 rounded-full bg-white border border-sky-200 object-cover flex-shrink-0"
                     />
                     <div className="min-w-0">
-                      <p className="text-sm font-semibold text-white truncate">{rec.student.name}</p>
-                      <p className="text-xs text-slate-400 truncate">
+                      <p className="text-sm font-bold text-sky-950 truncate">{rec.student.name}</p>
+                      <p className="text-xs text-sky-600 font-medium truncate">
                         Roll: {rec.student.rollNumber || "N/A"} • {rec.method}
                       </p>
                     </div>
                   </div>
                   <div className="flex items-center gap-2 flex-shrink-0">
-                    <span className="text-xs text-slate-500">
+                    <span className="text-xs text-sky-500 font-medium">
                       {formatDateTime(rec.timestamp, { timeOnly: true })}
                     </span>
                     <Badge variant={getStatusVariant(rec.status)} size="sm">
@@ -393,7 +393,7 @@ export default function LiveAttendance() {
                 </div>
               ))
             ) : (
-              <div className="py-16 text-center text-sm text-slate-500">
+              <div className="py-16 text-center text-sm text-sky-400 font-medium">
                 Waiting for students to scan the projector QR code...
               </div>
             )}

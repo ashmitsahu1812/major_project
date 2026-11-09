@@ -10,26 +10,18 @@ import {
 
 export default function AttendanceDonutChart({ data = [] }) {
   const COLORS = [
-    "#6366F1",
-    "#10B981",
-    "#F59E0B",
-    "#EF4444",
-    "#0EA5E9",
-    "#8B5CF6",
+    "#0284c7",
+    "#10b981",
+    "#f59e0b",
+    "#ef4444",
+    "#38bdf8",
+    "#6366f1",
   ];
 
   return (
     <div className="w-full h-full">
       <ResponsiveContainer width="100%" height="100%">
         <PieChart>
-          <defs>
-            <pattern id="grid" x="0" y="0" width="20" height="20" patternUnits="userSpaceOnUse">
-              <circle cx="10" cy="10" r="0.5" fill="#1e293b" />
-            </pattern>
-            <filter id="glow">
-              <feDropShadow dx="0" dy="0" stdDeviation="3" floodColor="#6366F1" floodOpacity="0.4" />
-            </filter>
-          </defs>
           <Pie
             data={data}
             cx="50%"
@@ -44,8 +36,8 @@ export default function AttendanceDonutChart({ data = [] }) {
               <Cell
                 key={`cell-${index}`}
                 fill={entry.color || COLORS[index % COLORS.length]}
-                stroke="rgba(255,255,255,0.08)"
-                strokeWidth={1.5}
+                stroke="#ffffff"
+                strokeWidth={2}
               />
             ))}
           </Pie>
@@ -54,10 +46,10 @@ export default function AttendanceDonutChart({ data = [] }) {
               if (!active || !payload?.length) return null;
               const p = payload[0].payload;
               return (
-                <div className="bg-slate-900/95 border border-slate-700/80 rounded-xl shadow-xl px-4 py-3 pointer-events-none">
-                  <p className="text-xs font-black text-white">{p.name}</p>
-                  <p className="text-xs text-slate-400">{p.value} students</p>
-                  <p className="text-sm font-bold text-white mt-0.5">{p.payload.percentage}%</p>
+                <div className="bg-white border border-sky-100 rounded-xl shadow-lg px-4 py-3 pointer-events-none">
+                  <p className="text-xs font-bold text-sky-950">{p.name}</p>
+                  <p className="text-xs text-slate-500">{p.value} students</p>
+                  <p className="text-sm font-black text-sky-600 mt-0.5">{p.percentage || p.value}%</p>
                 </div>
               );
             }}
@@ -68,7 +60,7 @@ export default function AttendanceDonutChart({ data = [] }) {
             iconSize={10}
             iconType="circle"
             formatter={(value) => (
-              <span className="text-xs text-slate-400">{value}</span>
+              <span className="text-xs font-medium text-slate-600">{value}</span>
             )}
           />
         </PieChart>

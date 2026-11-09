@@ -76,49 +76,49 @@ export default function EngagementPrompt() {
   if (!activePing) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-fade-in">
-      <div className="w-full max-w-md bg-slate-900 border-2 border-indigo-500/50 rounded-3xl p-6 shadow-2xl shadow-indigo-950/80 space-y-6 relative overflow-hidden">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-sky-950/40 backdrop-blur-md animate-fade-in">
+      <div className="w-full max-w-md bg-white border-2 border-sky-300 rounded-3xl p-6 shadow-2xl shadow-sky-900/10 space-y-6 relative overflow-hidden">
         {/* Animated Accent Bar */}
-        <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-brand-500 via-indigo-400 to-accent-400 animate-pulse" />
+        <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-sky-400 via-blue-500 to-sky-400 animate-pulse" />
 
         <div className="flex items-start justify-between">
           <div className="flex items-center gap-3">
-            <div className="p-3 rounded-2xl bg-indigo-500/15 border border-indigo-500/30 text-indigo-400">
+            <div className="p-3 rounded-2xl bg-sky-50 border border-sky-200 text-sky-500 shadow-sm">
               <Zap className="w-6 h-6 animate-bounce" />
             </div>
             <div>
-              <h3 className="text-base font-bold text-white tracking-tight">
+              <h3 className="text-base font-bold text-sky-950 tracking-tight">
                 Live Attendance Check
               </h3>
-              <p className="text-xs text-slate-400">
+              <p className="text-xs text-sky-600 font-medium">
                 Online / Hybrid Active Presence Verification
               </p>
             </div>
           </div>
 
-          <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-950 border border-slate-800 text-amber-400 font-mono text-sm font-bold">
+          <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-sky-50 border border-sky-200 text-amber-600 font-mono text-sm font-bold shadow-sm">
             <Timer className="w-4 h-4 animate-spin" />
             <span>{secondsLeft}s</span>
           </div>
         </div>
 
         {confirmed ? (
-          <div className="p-6 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 text-center space-y-2">
-            <CheckCircle2 className="w-10 h-10 text-emerald-400 mx-auto" />
-            <h4 className="text-sm font-bold text-white">Presence Acknowledged</h4>
-            <p className="text-xs text-slate-300">
+          <div className="p-6 rounded-2xl bg-emerald-50 border border-emerald-200 text-center space-y-2">
+            <CheckCircle2 className="w-10 h-10 text-emerald-500 mx-auto" />
+            <h4 className="text-sm font-bold text-emerald-950">Presence Acknowledged</h4>
+            <p className="text-xs text-emerald-700 font-medium">
               Your active participation in this lecture has been cryptographically recorded.
             </p>
           </div>
         ) : (
           <form onSubmit={handleSubmit} className="space-y-4">
-            <div className="p-3.5 rounded-xl bg-slate-950/60 border border-slate-800/80 text-xs text-slate-400 leading-relaxed">
-              Enter the <strong>4-digit challenge code</strong> broadcast by your instructor
-              to prove active attention.
+            <div className="p-3.5 rounded-xl bg-sky-50/60 border border-sky-100 text-xs text-sky-800 font-medium leading-relaxed">
+              Enter the <strong className="text-sky-950 font-bold">4-digit challenge code</strong> broadcast by your instructor
+              to confirm active presence.
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-slate-300 mb-1.5">
+              <label className="block text-xs font-bold text-sky-900 mb-1.5">
                 4-Digit Challenge Code
               </label>
               <input
@@ -129,7 +129,7 @@ export default function EngagementPrompt() {
                 placeholder="e.g. 7429"
                 required
                 autoFocus
-                className="w-full text-center tracking-[0.5em] font-mono text-2xl py-3 bg-slate-950 border border-slate-800 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-indigo-500/30 focus:border-indigo-500"
+                className="w-full text-center tracking-[0.5em] font-mono text-2xl py-3 bg-white border border-sky-200 rounded-xl text-sky-950 focus:outline-none focus:ring-2 focus:ring-sky-400/20 focus:border-sky-500 shadow-sm"
               />
             </div>
 

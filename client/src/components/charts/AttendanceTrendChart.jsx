@@ -10,11 +10,6 @@ import {
 } from "recharts";
 
 export default function AttendanceTrendChart({ data = [] }) {
-  const COLORS = {
-    present: "url(#presentGrad)",
-    flagged: "url(#flaggedGrad)",
-  };
-
   return (
     <div className="w-full h-full">
       <ResponsiveContainer width="100%" height="100%">
@@ -24,28 +19,28 @@ export default function AttendanceTrendChart({ data = [] }) {
         >
           <defs>
             <linearGradient id="presentGrad" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="5%" stopColor="#6366F1" stopOpacity={0.35} />
-              <stop offset="95%" stopColor="#6366F1" stopOpacity={0.05} />
+              <stop offset="5%" stopColor="#0ea5e9" stopOpacity={0.35} />
+              <stop offset="95%" stopColor="#0ea5e9" stopOpacity={0.02} />
             </linearGradient>
             <linearGradient id="flaggedGrad" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="5%" stopColor="#EF4444" stopOpacity={0.35} />
-              <stop offset="95%" stopColor="#EF4444" stopOpacity={0.02} />
+              <stop offset="5%" stopColor="#ef4444" stopOpacity={0.35} />
+              <stop offset="95%" stopColor="#ef4444" stopOpacity={0.02} />
             </linearGradient>
           </defs>
           <CartesianGrid
             strokeDasharray="3 3"
-            stroke="rgba(71, 85, 105, 0.25)"
-            opacity={0.5}
+            stroke="#e0f2fe"
+            opacity={0.8}
           />
           <XAxis
             dataKey="date"
-            stroke="#475569"
+            stroke="#64748b"
             fontSize={11}
             tickLine={false}
             axisLine={false}
           />
           <YAxis
-            stroke="#475569"
+            stroke="#64748b"
             fontSize={11}
             tickLine={false}
             axisLine={false}
@@ -56,14 +51,14 @@ export default function AttendanceTrendChart({ data = [] }) {
               if (!active || !payload?.length) return null;
               const p = payload[0].payload;
               return (
-                <div className="bg-slate-900/95 border border-slate-700/80 rounded-xl shadow-lg px-4 py-3 pointer-events-none">
-                  <p className="text-xs font-bold text-white">{p.date}</p>
+                <div className="bg-white border border-sky-100 rounded-xl shadow-lg px-4 py-3 pointer-events-none">
+                  <p className="text-xs font-bold text-sky-950">{p.date}</p>
                   <div className="flex gap-4 mt-1.5">
-                    <span className="flex items-center gap-1.5 text-xs">
-                      <span className="w-2.5 h-2.5 rounded-full bg-brand-500" />
+                    <span className="flex items-center gap-1.5 text-xs text-slate-600 font-medium">
+                      <span className="w-2.5 h-2.5 rounded-full bg-sky-500" />
                       Present: {p.present}
                     </span>
-                    <span className="flex items-center gap-1.5 text-xs">
+                    <span className="flex items-center gap-1.5 text-xs text-slate-600 font-medium">
                       <span className="w-2.5 h-2.5 rounded-full bg-rose-500" />
                       Flagged: {p.flagged}
                     </span>
@@ -76,7 +71,7 @@ export default function AttendanceTrendChart({ data = [] }) {
             type="monotone"
             dataKey="present"
             name="Present Students"
-            stroke="#6366F1"
+            stroke="#0ea5e9"
             strokeWidth={2.5}
             fill="url(#presentGrad)"
             activeDot={false}
@@ -85,7 +80,7 @@ export default function AttendanceTrendChart({ data = [] }) {
             type="monotone"
             dataKey="flagged"
             name="Proxy Flags"
-            stroke="#EF4444"
+            stroke="#ef4444"
             strokeWidth={2}
             fill="url(#flaggedGrad)"
             activeDot={false}

@@ -62,7 +62,7 @@ export default function App() {
 
           <Suspense
             fallback={
-              <div className="min-h-screen flex items-center justify-center bg-slate-950">
+              <div className="min-h-screen flex items-center justify-center bg-slate-50">
                 <LoadingSpinner size="lg" text="Loading portal..." />
               </div>
             }
